@@ -7,8 +7,8 @@
 import SwiftData
 import SwiftUI
 
-struct EditPersonView: View {
-    @Bindable var person: Person
+struct EditItemView: View {
+    @Bindable var person: Item
     
     var body: some View {
         Form {
