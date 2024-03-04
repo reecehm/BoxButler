@@ -9,32 +9,27 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
-    @State private var path = [Person]()
-    @Query var people: [Person]
+    @State private var path = [Item]()
+    @Query var items: [Item]
     
     var body: some View {
-        NavigationStack(path: $path){
-            List {
-                ForEach(people) { person in
-                    NavigationLink(value: person) {
-                        Text(person.name)
-                    }
+        TabView{
+            MainView()
+                .tabItem{
+                    Image(systemName: "shippingbox")
+                    Text("Items")
                 }
-            }
-            .navigationTitle("Box Butler")
-            .navigationDestination(for: Person.self) {person in
-                EditPersonView(person: person)
-            }
-            .toolbar {
-                Button("Add Person", systemImage: "plus", action: addPerson)
-            }
+            SearchView()
+                .tabItem{
+                    Image(systemName: "magnifyingglass")
+                    Text("Search")
+                }
+            SettingsView()
+                .tabItem{
+                     Image(systemName: "gear")
+                     Text("Settings")
+                }
         }
-    }
-    
-    func addPerson() {
-        let person = Person(name: "", emailAddress: "", details: "")
-        modelContext.insert(person)
-        path.append(person)
     }
 }
 

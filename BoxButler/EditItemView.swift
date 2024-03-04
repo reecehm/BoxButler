@@ -8,25 +8,25 @@ import SwiftData
 import SwiftUI
 
 struct EditItemView: View {
-    @Bindable var person: Item
+    @Bindable var item: Item
     
     var body: some View {
         Form {
             Section {
-                TextField("Name", text: $person.name)
+                TextField("Name", text: $item.name)
                     .textContentType(.name)
                 
-                TextField("Email Address", text: $person.emailAddress)
+                TextField("Email Address", text: $item.emailAddress)
                     .textContentType(.emailAddress)
                     .textInputAutocapitalization(.never)
                 
             }
             Section {
-                TextField("Detail about this person", text: $person.details, axis: .vertical)
+                TextField("Detail about this item", text: $item.details, axis: .vertical)
             }
 
         }
-        .navigationTitle("Edit Person")
+        .navigationTitle("Edit Item")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
