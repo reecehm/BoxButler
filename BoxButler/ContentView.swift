@@ -14,6 +14,11 @@ struct ContentView: View {
     
     var body: some View {
         TabView{
+            HomeView()
+                .tabItem{
+                    Image(systemName: "house.fill")
+                    Text("Home")
+                }
             MainView()
                 .tabItem{
                     Image(systemName: "shippingbox")

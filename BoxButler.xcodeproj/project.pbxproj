@@ -16,6 +16,7 @@
 		5317D78E2B952A9100BFBF00 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5317D78D2B952A9100BFBF00 /* SearchView.swift */; };
 		5317D7902B952A9D00BFBF00 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5317D78F2B952A9D00BFBF00 /* SettingsView.swift */; };
 		5317D7922B952C8000BFBF00 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5317D7912B952C8000BFBF00 /* MainView.swift */; };
+		53FE8E652B976FEA00EA9C95 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FE8E642B976FEA00EA9C95 /* HomeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		5317D78D2B952A9100BFBF00 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		5317D78F2B952A9D00BFBF00 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5317D7912B952C8000BFBF00 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		53FE8E642B976FEA00EA9C95 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				5317D78D2B952A9100BFBF00 /* SearchView.swift */,
 				5317D78F2B952A9D00BFBF00 /* SettingsView.swift */,
 				5317D7912B952C8000BFBF00 /* MainView.swift */,
+				53FE8E642B976FEA00EA9C95 /* HomeView.swift */,
 			);
 			path = BoxButler;
 			sourceTree = "<group>";
@@ -157,6 +160,7 @@
 				5317D76E2B9120C900BFBF00 /* Item.swift in Sources */,
 				5317D7622B90ECD300BFBF00 /* ContentView.swift in Sources */,
 				5317D7902B952A9D00BFBF00 /* SettingsView.swift in Sources */,
+				53FE8E652B976FEA00EA9C95 /* HomeView.swift in Sources */,
 				5317D7602B90ECD300BFBF00 /* BoxButlerApp.swift in Sources */,
 				5317D7702B9128C500BFBF00 /* EditItemView.swift in Sources */,
 			);
