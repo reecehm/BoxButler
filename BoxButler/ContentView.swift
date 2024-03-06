@@ -19,7 +19,7 @@ struct ContentView: View {
                     Image(systemName: "house.fill")
                     Text("Home")
                 }
-            MainView()
+            ItemView()
                 .tabItem{
                     Image(systemName: "shippingbox")
                     Text("Items")

@@ -15,7 +15,15 @@ struct HomeView: View {
         ZStack{
             VStack{
                 HStack{
+                    Spacer()
                     Text("Not in an Organization? Click here to join a group.")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .frame(width: 230
+                               , height: 75
+                        )
+                        .background(Rectangle().fill(Color(.lightGray)))
+                         .cornerRadius(10)
                     Spacer()
                     VStack{
                         Text("Username")
@@ -23,51 +31,54 @@ struct HomeView: View {
                             .fixedSize(horizontal: false, vertical: true)
                                .multilineTextAlignment(.center)
                                .padding()
-                               .frame(width: 150
+                               .frame(width: 120
                                       , height: 40
                                )
                                .background(Rectangle().fill(Color(tanColor)))
-                                .cornerRadius(30)
+                                .cornerRadius(10)
                         Text("Group")
                             .foregroundColor(Color.white)
                             .fixedSize(horizontal: false, vertical: true)
                                .multilineTextAlignment(.center)
                                .padding()
-                               .frame(width: 150
+                               .frame(width: 120
                                       , height: 40
                                )
                                .background(Rectangle().fill(Color(tanColor)))
-                                   .cornerRadius(30)
-                        Text("Settings")
-                            .foregroundColor(Color.white)
-                            .fixedSize(horizontal: false, vertical: true)
-                               .multilineTextAlignment(.center)
-                               .padding()
-                               .frame(width: 150
-                                      , height: 40
-                               )
-                               .background(Rectangle().fill(Color(tanColor)))
-                                   .cornerRadius(30)
+                                   .cornerRadius(10)
                     }
+                    Spacer()
                 }
-                .padding()
+                Spacer()
                 HStack{
                     Button {
                         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
                     } label:{
+                        VStack {
                         Text("Recents")
                             .fontWeight(.bold)
                             .buttonStyle(.borderedProminent)
-                            .frame(width: 150, height: 200)
+                            .padding()
+                        Image(systemName: "clock.arrow.circlepath")
+                            .resizable()
+                            .frame(width:65, height: 60)
+                    }
+                    .frame(width: 150, height: 200)
                     }
                     .buttonStyle(.bordered)
                     Button {
                         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
                     } label:{
-                        Text("Folders")
-                            .fontWeight(.bold)
-                            .buttonStyle(.borderedProminent)
-                            .frame(width: 150, height: 200)
+                        VStack {
+                            Text("Folders")
+                                .fontWeight(.bold)
+                                .buttonStyle(.borderedProminent)
+                                .padding()
+                            Image(systemName: "folder")
+                                .resizable()
+                                .frame(width:60, height: 50)
+                        }
+                        .frame(width: 150, height: 200)
                     }
                     .buttonStyle(.bordered)
                 }
@@ -75,24 +86,38 @@ struct HomeView: View {
                     Button {
                         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
                     } label:{
-                        Text("Scan")
-                            .fontWeight(.bold)
-                            .buttonStyle(.borderedProminent)
-                            .frame(width: 150, height: 200)
+                        VStack {
+                            Text("Scan")
+                                .fontWeight(.bold)
+                                .buttonStyle(.borderedProminent)
+                                .padding()
+                            Image(systemName: "camera")
+                                .resizable()
+                                .frame(width:66, height: 50)
+                        }
+                        .frame(width: 150, height: 200)
                     }
                     .buttonStyle(.bordered)
                     Button {
                         /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
                     } label:{
-                        Text("Changes")
-                            .fontWeight(.bold)
-                            .buttonStyle(.borderedProminent)
-                            .frame(width: 150, height: 200)
+                        VStack {
+                            Text("Changes")
+                                .fontWeight(.bold)
+                                .buttonStyle(.borderedProminent)
+                                .padding()
+                            Image(systemName: "book")
+                                .resizable()
+                                .frame(width:60, height: 50)
+                        }
+                        .frame(width: 150, height: 200)
                     }
                     .buttonStyle(.bordered)
                 }
             }
+            
         }
+        .padding(.bottom, 80.0)
     }
 }
 #Preview {

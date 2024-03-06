@@ -11,23 +11,29 @@ struct EditItemView: View {
     @Bindable var item: Item
     
     var body: some View {
+        let numberFormatter: NumberFormatter = {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .none
+            formatter.zeroSymbol  = ""
+            return formatter
+        }()
+        
         Form {
             Section {
-                TextField("Name", text: $item.name)
-                    .textContentType(.name)
-                
-                TextField("Email Address", text: $item.emailAddress)
-                    .textContentType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                
+                TextField("Item Name", text: $item.itemName)
+                TextField("Quantity", text: $item.quantity)
+                TextField("Price", value: $item.price, formatter: numberFormatter).keyboardType(.numbersAndPunctuation)
+                TextField("Folder Name", text: $item.folderName)
             }
-            Section {
-                TextField("Detail about this item", text: $item.details, axis: .vertical)
+            
+            Section("Notes"){
+                
             }
 
         }
         .navigationTitle("Edit Item")
         .navigationBarTitleDisplayMode(.inline)
+        
     }
 }
 
