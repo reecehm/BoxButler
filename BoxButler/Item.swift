@@ -10,13 +10,15 @@ import SwiftData
 
 @Model
 class Item {
-    var name: String
-    var emailAddress: String
-    var details: String
+    var itemName: String
+    var quantity: String
+    var price: Double
+    var folderName: String
     
-    init(name: String, emailAddress: String, details: String) {
-        self.name = name
-        self.emailAddress = emailAddress
-        self.details = details
+    init(itemName: String, quantity: String, price: Double, folderName: String) {
+        self.itemName = itemName
+        self.quantity = quantity
+        self.price = price
+        self.folderName = folderName
     }
 }
