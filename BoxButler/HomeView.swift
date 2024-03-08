@@ -61,7 +61,7 @@ struct HomeView: View {
                             .padding()
                         Image(systemName: "clock.arrow.circlepath")
                             .resizable()
-                            .frame(width:65, height: 60)
+                            .frame(width:70, height: 63)
                     }
                     .frame(width: 150, height: 200)
                     }
@@ -76,7 +76,7 @@ struct HomeView: View {
                                 .padding()
                             Image(systemName: "folder")
                                 .resizable()
-                                .frame(width:60, height: 50)
+                                .frame(width:71, height: 57)
                         }
                         .frame(width: 150, height: 200)
                     }
@@ -93,7 +93,7 @@ struct HomeView: View {
                                 .padding()
                             Image(systemName: "camera")
                                 .resizable()
-                                .frame(width:66, height: 50)
+                                .frame(width:66, height: 52)
                         }
                         .frame(width: 150, height: 200)
                     }
