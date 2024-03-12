@@ -12,33 +12,29 @@ struct ItemsListView: View {
     @Query var items: [Item]
     
     var body: some View {
-        if items.isEmpty == true{
-            VStack {
-                Text("There's no items in your list! Click the plus to add an item.")
-                    .foregroundColor(Color.gray)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .background(Rectangle()
-                        .fill(Color(.gray)
-                            .opacity(0.13))
-                            .cornerRadius(12))
-                Spacer()
-            }
-        }
-        else {
+        if !items.isEmpty {
             Text("Swipe left to delete items.")
                 .foregroundColor(Color.gray)
                 .multilineTextAlignment(.leading)
-                .padding(.leading)
+        }
             List {
                 ForEach(items) { item in
                     NavigationLink(value: item) {
                         Text(item.itemName)
                     }
                 }
-                    .onDelete(perform: deletePeople)
+                    .onDelete(perform: deleteItems)
             }
-        }
+            .overlay{
+                if items.isEmpty {
+                    ContentUnavailableView(label: {
+                        Label("No Items", systemImage: "circle.grid.3x3.fill")
+                    }, description: {
+                        Text("Click the plus to add items.")
+                    })
+                }
+            }
+
     }
 
     init(searchString: String = "") {
@@ -51,13 +47,14 @@ struct ItemsListView: View {
         })
     }
     
-    func deletePeople(at offsets: IndexSet) {
+    func deleteItems(at offsets: IndexSet) {
         for offsets in offsets {
             let item = items[offsets]
             modelContext.delete(item)
         }
     }
 }
+
 
 #Preview {
     ItemsListView()

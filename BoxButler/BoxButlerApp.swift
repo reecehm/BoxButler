@@ -15,6 +15,6 @@ struct BoxButlerApp: App {
             ContentView()
         }
         // This is a comment
-        .modelContainer(for: Item.self)
+        .modelContainer(for: [Item.self, Folder.self])
     }
 }
