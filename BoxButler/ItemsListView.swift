@@ -10,20 +10,30 @@ import SwiftUI
 struct ItemsListView: View {
     @Environment(\.modelContext) var modelContext
     @Query var items: [Item]
+    @Query var folders: [Folder]
     
     var body: some View {
         if !items.isEmpty {
             Text("Swipe left to delete items.")
                 .foregroundColor(Color.gray)
                 .multilineTextAlignment(.leading)
-        }
+                .padding(.leading, -165.0)
+                .padding(.top, 2)
+            }
             List {
                 ForEach(items) { item in
                     NavigationLink(value: item) {
                         Text(item.itemName)
                     }
                 }
-                    .onDelete(perform: deleteItems)
+                .onDelete(perform: deleteItems)
+                ForEach(folders) { folder in
+                    NavigationLink(value: folder) {
+                        Image(systemName: "folder.fill")
+                        Text(folder.folderName)
+                        }
+                    }
+                .onDelete(perform: deleteFolders)
             }
             .overlay{
                 if items.isEmpty {
@@ -36,7 +46,6 @@ struct ItemsListView: View {
             }
 
     }
-
     init(searchString: String = "") {
         _items = Query(filter: #Predicate { item in
             if searchString.isEmpty {
@@ -51,6 +60,12 @@ struct ItemsListView: View {
         for offsets in offsets {
             let item = items[offsets]
             modelContext.delete(item)
+        }
+    }
+    func deleteFolders(at offsets: IndexSet) {
+        for offsets in offsets {
+            let folder = folders[offsets]
+            modelContext.delete(folder)
         }
     }
 }

@@ -10,31 +10,25 @@ import SwiftUI
 struct ItemsView: View {
     @Environment(\.modelContext) var modelContext
     @State private var isShowingFolderSheet = false
-    @State private var itemPath = [Item]()
+    @State private var navPath = NavigationPath()
     @Query var folders: [Folder]
+    @Query var items: [Item]
     
     var body: some View {
             ZStack {
-                NavigationStack(path: $itemPath){
-                        ItemsListView()
-                            .navigationTitle("Box Butler")
-                            .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
-                            .toolbar {
-                                Button("Add Item", systemImage: "plus", action: addItem)
-                            }
-                        List {
-                        ForEach(folders) { folder in
-                            NavigationLink(value: folder) {
-                                Text(folder.folderName)
-                            }
-                            }
-                        }
-                        .navigationDestination(for: Folder.self) {folder in EditFolderView(folder: folder)}
-                    
-                }
-                .sheet(isPresented: $isShowingFolderSheet, content: {
-                    addFolderSheet()
-                })
+                    NavigationStack(path: $navPath){
+                            ItemsListView()
+                                .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
+                                .navigationDestination(for: Folder.self) {folder in EditFolderView(folder: folder)}
+                                .toolbar {
+                                    Button("Add Item", systemImage: "plus", action: addItem)
+                                }
+                    }
+                    .navigationTitle("Box Butler")
+                    .sheet(isPresented: $isShowingFolderSheet, content: {
+                        addFolderSheet()
+                    })
+                
                 HStack {
                     Spacer()
                         .frame(width: 255)
@@ -42,17 +36,17 @@ struct ItemsView: View {
                         Spacer()
                             .frame(height: 600)
                             Button(action: { isShowingFolderSheet = true
+                                for item in items {
+                                    item.selected = 0
+                                    }
                             }) {
-                                Image(systemName: "folder")
+                                Image(systemName: "folder.badge.plus")
                                     .frame(minWidth: 0, maxWidth: 40)
                                     .frame(minHeight: 0, maxHeight: 40)
                                     .font(.system(size: 18))
                                     .padding()
                                     .foregroundColor(.white)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 25)
-                                            .stroke(Color.white, lineWidth: 2)
-                                    )
+
                             }
                             .background(Color.red.opacity(0.65))
                             .cornerRadius(25)
@@ -63,46 +57,82 @@ struct ItemsView: View {
         
     }
     func addItem() {
-        let item = Item(itemName: "", quantity: "", price: 0, folderName: "")
+        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", selected: 0)
         modelContext.insert(item)
-        itemPath.append(item)
+        navPath.append(item)
     }
     
     struct addFolderSheet: View {
         @Environment(\.dismiss) private var dismiss
         @Environment(\.modelContext) var modelContext
+        @State private var assigning: [Item] = []
         @State private var name: String = ""
+        @State var index: Int = 0
         @Query var items: [Item]
         
-        var body: some View {
-            NavigationStack{
-                Form {
-                    Section{
-                        TextField("Folder Name", text: $name)
-                    }
-                    Section("Select Items to Sort"){
+        
+    var body: some View {
+        NavigationStack{
+            Form {
+                Section{
+                    TextField("Folder Name", text: $name)
+                }
+                Section("Select Items to Sort"){
+                    List{
                         ForEach(items) { item in
-                                Text(item.itemName)
+                            Button(action: {
+                                if item.selected == 0 {
+                                    item.selected = 1
+                                    assigning.append(item)
+                                }
+                                else {
+                                    item.selected = 0
+                                    index = assigning.firstIndex(of: item)!
+                                    assigning.remove(at : index)
+                                    
+                                }
+                            }) {
+                                HStack{
+                                    Text(item.itemName)
+                                    if !assigning.isEmpty && assigning.contains(item) == true {
+                                        Image(systemName: "checkmark")
+                                        .foregroundColor(.blue)}
+                                    else{
+                                        Image(systemName: "checkmark")
+                                            .opacity(0.0)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                .navigationTitle("New Folder")
-                .toolbar {
-                    ToolbarItemGroup(placement: .topBarLeading) {
-                        Button("Cancel") {dismiss()}
-                    }
-                    ToolbarItemGroup(placement: .topBarTrailing) {
-                        Button("Save") {
-                            let folder = Folder(folderName: name, items: [])
-                            modelContext.insert(folder)
-                            dismiss()
+            }
+            .navigationTitle("New Folder")
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarLeading) {
+                    Button("Cancel") {for item in items {
+                        item.selected = 0
                         }
+                        dismiss()}
+                }
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button{
+                            let folder = Folder(folderName: name, items: assigning)
+                            modelContext.insert(folder)
+                            for item in items {
+                                item.selected = 0
+                            }
+                            dismiss()
+                    } label: {
+                        Text("Save")
                     }
                 }
             }
         }
     }
+    }
 }
+
 
 #Preview {
     ItemsView()

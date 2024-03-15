@@ -14,7 +14,6 @@ struct BoxButlerApp: App {
         WindowGroup {
             ContentView()
         }
-        // This is a comment
         .modelContainer(for: [Item.self, Folder.self])
     }
 }

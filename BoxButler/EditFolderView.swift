@@ -9,24 +9,27 @@ import SwiftUI
 
 struct EditFolderView: View {
     @Bindable var folder: Folder
+    @Query var items: [Item]
     
     var body: some View {
         
-        Form {
-            Section {
-                TextField("Folder Name", text: $folder.folderName)
+            Form {
+                Section ("Folder Name") {
+                    TextField("Folder Name", text: $folder.folderName)
+                }
+                Section {
+                        List{
+                            ForEach(folder.contents!) { item in
+                                NavigationLink(value: item) {
+                                    Text(item.itemName)
+                                    }
+                            }
+                        }
+                }
             }
-            Section {
-                
-            }
-
+            .navigationTitle("Edit Folder")
         }
-        .navigationTitle("Edit Folder")
-        .navigationBarTitleDisplayMode(.inline)
-        
-    }
 }
-
 //#Preview {
 //    EditPersonView()
 //}

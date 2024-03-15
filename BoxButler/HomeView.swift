@@ -12,7 +12,6 @@ struct HomeView: View {
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
     
     var body: some View {
-        ZStack{
             VStack{
                 HStack{
                     Spacer()
@@ -116,7 +115,7 @@ struct HomeView: View {
                 }
             }
             
-        }
+        
         .padding(.bottom, 80.0)
     }
 }

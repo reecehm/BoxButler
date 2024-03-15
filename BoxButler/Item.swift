@@ -9,16 +9,18 @@ import Foundation
 import SwiftData
 
 @Model
-class Item {
+class Item: Hashable {
     var itemName: String
     var quantity: String
     var price: Double
     var folderName: String
+    var selected = 0
     
-    init(itemName: String, quantity: String, price: Double, folderName: String) {
+    init(itemName: String, quantity: String, price: Double, folderName: String, selected: Int) {
         self.itemName = itemName
         self.quantity = quantity
         self.price = price
         self.folderName = folderName
+        self.selected = selected
     }
 }
