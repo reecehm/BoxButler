@@ -11,6 +11,8 @@ struct HomeView: View {
     
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
     
+    let greyColor = Color(red: 0.9137, green: 0.9137, blue: 0.9215)
+    
     var body: some View {
             VStack{
                 HStack{
