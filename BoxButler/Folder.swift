@@ -9,12 +9,14 @@ import Foundation
 import SwiftData
 
 @Model
-class Folder: Hashable {
+class Folder: Hashable, Identifiable {
     var folderName: String
     var contents: [Item]?
+    var id: UUID
     
-    init(folderName: String, items: [Item]?) {
+    init(folderName: String, contents: [Item]?, id: UUID) {
         self.folderName = folderName
-        self.contents = items
+        self.contents = contents
+        self.id = id
     }
 }

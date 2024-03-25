@@ -8,6 +8,7 @@ import SwiftData
 import SwiftUI
 
 struct EditFolderView: View {
+    @Environment(\.modelContext) var modelContext
     @Bindable var folder: Folder
     @Query var items: [Item]
     
@@ -29,7 +30,10 @@ struct EditFolderView: View {
             }
             .navigationTitle("Edit Folder")
         }
+    
 }
+
+
 //#Preview {
 //    EditPersonView()
 //}

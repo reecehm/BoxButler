@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditItemView: View {
     @Bindable var item: Item
+    @Query var folders: [Folder]
     
     var body: some View {
         let numberFormatter: NumberFormatter = {
@@ -23,7 +24,11 @@ struct EditItemView: View {
                 TextField("Item Name", text: $item.itemName)
                 TextField("Quantity", text: $item.quantity)
                 TextField("Price", value: $item.price, formatter: numberFormatter).keyboardType(.numbersAndPunctuation)
-                TextField("Folder Name", text: $item.folderName)
+                Picker("Folder", selection: $item.folderName) {
+                    ForEach(folders){ folder in
+                        Text(folder.folderName)
+                    }
+                }
             }
             
             Section("Notes"){

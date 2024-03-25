@@ -19,7 +19,16 @@ struct ItemsView: View {
                     NavigationStack(path: $navPath){
                             ItemsListView()
                                 .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
-                                .navigationDestination(for: Folder.self) {folder in EditFolderView(folder: folder)}
+                                .navigationDestination(for: Folder.self) {folder in EditFolderView(folder: folder)
+                                        .toolbar {
+                                            ToolbarItemGroup(placement: .topBarTrailing) {
+                                                Button("Add Item", systemImage: "plus", action:{
+                                                    addFolderItem(folder: folder)
+                                                }
+                                                )
+                                            }
+                                        }
+                                }
                                 .toolbar {
                                     Button("Add Item", systemImage: "plus", action: addItem)
                                 }
@@ -62,6 +71,12 @@ struct ItemsView: View {
         navPath.append(item)
     }
     
+    func addFolderItem(folder: Folder){
+        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", selected: 0)
+        folder.contents!.append(item)
+        navPath.append(item)
+    }
+    
     struct addFolderSheet: View {
         @Environment(\.dismiss) private var dismiss
         @Environment(\.modelContext) var modelContext
@@ -80,6 +95,7 @@ struct ItemsView: View {
                 Section("Select Items to Sort"){
                     List{
                         ForEach(items) { item in
+                            
                             Button(action: {
                                 if item.selected == 0 {
                                     item.selected = 1
@@ -117,8 +133,11 @@ struct ItemsView: View {
                 }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Button{
-                            let folder = Folder(folderName: name, items: assigning)
+                        let folder = Folder(folderName: name, contents: assigning, id: UUID())
                             modelContext.insert(folder)
+                            for item in assigning {
+                                item.folderName = folder.folderName
+                            }
                             for item in items {
                                 item.selected = 0
                             }
@@ -130,6 +149,17 @@ struct ItemsView: View {
             }
         }
     }
+    }
+    
+    func itemExists(item: Item) -> Bool{
+        for Folder in folders{
+            for Item in Folder.contents!{
+                if Item == item {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
 

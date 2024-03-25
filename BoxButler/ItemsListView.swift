@@ -22,8 +22,10 @@ struct ItemsListView: View {
             }
             List {
                 ForEach(items) { item in
-                    NavigationLink(value: item) {
-                        Text(item.itemName)
+                    if itemExists(item: item) == false {
+                        NavigationLink(value: item) {
+                                        Text(item.itemName)
+                        }
                     }
                 }
                 .onDelete(perform: deleteItems)
@@ -67,6 +69,17 @@ struct ItemsListView: View {
             let folder = folders[offsets]
             modelContext.delete(folder)
         }
+    }
+    
+    func itemExists(item: Item) -> Bool{
+        for Folder in folders{
+            for Item in Folder.contents!{
+                if Item == item {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
 
