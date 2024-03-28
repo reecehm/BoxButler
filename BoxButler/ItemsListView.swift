@@ -7,13 +7,29 @@
 import SwiftData
 import SwiftUI
 
+extension String {
+    func currencyFormatting() -> String {
+        if let value = Double(self) {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .currency
+            formatter.maximumFractionDigits = 2
+            formatter.minimumFractionDigits = 2
+            if let str = formatter.string(for: value) {
+                return str
+            }
+        }
+        return ""
+    }
+}
+
 struct ItemsListView: View {
     @Environment(\.modelContext) var modelContext
     @Query var items: [Item]
     @Query var folders: [Folder]
+
     
     var body: some View {
-        if !items.isEmpty {
+        if !items.isEmpty || !folders.isEmpty {
             Text("Swipe left to delete items.")
                 .foregroundColor(Color.gray)
                 .multilineTextAlignment(.leading)
@@ -22,9 +38,14 @@ struct ItemsListView: View {
             }
             List {
                 ForEach(items) { item in
-                    if itemExists(item: item) == false {
+                    let decimalString = "\(item.price)"
+                    if itemInFolder(item: item) == false {
                         NavigationLink(value: item) {
-                                        Text(item.itemName)
+                            HStack{
+                                Text(item.itemName)
+                                Spacer()
+                                Text(decimalString.currencyFormatting())
+                            }
                         }
                     }
                 }
@@ -38,7 +59,7 @@ struct ItemsListView: View {
                 .onDelete(perform: deleteFolders)
             }
             .overlay{
-                if items.isEmpty {
+                if items.isEmpty && folders.isEmpty {
                     ContentUnavailableView(label: {
                         Label("No Items", systemImage: "circle.grid.3x3.fill")
                     }, description: {
@@ -71,9 +92,9 @@ struct ItemsListView: View {
         }
     }
     
-    func itemExists(item: Item) -> Bool{
+    func itemInFolder(item: Item) -> Bool{
         for Folder in folders{
-            for Item in Folder.contents!{
+            for Item in Folder.contents{
                 if Item == item {
                     return true
                 }

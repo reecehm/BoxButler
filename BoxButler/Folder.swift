@@ -10,11 +10,11 @@ import SwiftData
 
 @Model
 class Folder: Hashable, Identifiable {
+    let id = UUID()
     var folderName: String
-    var contents: [Item]?
-    var id: UUID
+    var contents: [Item] = []
     
-    init(folderName: String, contents: [Item]?, id: UUID) {
+    init(folderName: String, contents: [Item] = [], id: UUID) {
         self.folderName = folderName
         self.contents = contents
         self.id = id

@@ -73,7 +73,7 @@ struct ItemsView: View {
     
     func addFolderItem(folder: Folder){
         let item = Item(itemName: "", quantity: "", price: 0, folderName: "", selected: 0)
-        folder.contents!.append(item)
+        folder.contents.append(item)
         navPath.append(item)
     }
     
@@ -153,7 +153,7 @@ struct ItemsView: View {
     
     func itemExists(item: Item) -> Bool{
         for Folder in folders{
-            for Item in Folder.contents!{
+            for Item in Folder.contents{
                 if Item == item {
                     return true
                 }

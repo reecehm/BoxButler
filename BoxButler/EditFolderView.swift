@@ -18,18 +18,25 @@ struct EditFolderView: View {
                 Section ("Folder Name") {
                     TextField("Folder Name", text: $folder.folderName)
                 }
-                Section {
+                Section ("Folder Items"){
                         List{
-                            ForEach(folder.contents!) { item in
+                            ForEach(folder.contents) { item in
                                 NavigationLink(value: item) {
                                     Text(item.itemName)
                                     }
                             }
+                            .onDelete(perform: deleteItems)
                         }
                 }
             }
             .navigationTitle("Edit Folder")
+    }
+    func deleteItems(at offsets: IndexSet) {
+        for offsets in offsets {
+            let item = items[offsets]
+            modelContext.delete(item)
         }
+    }
     
 }
 

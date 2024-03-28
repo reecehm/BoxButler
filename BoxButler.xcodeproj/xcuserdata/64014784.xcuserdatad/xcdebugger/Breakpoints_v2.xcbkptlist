@@ -3,4 +3,70 @@
    uuid = "0EE4DA9B-17DA-488B-8114-3BF2F6C06E6F"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F9293A72-4DA6-46B1-BAA0-CF4AD2DDDE89"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BoxButler/Folder.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "15"
+            endingLineNumber = "15"
+            landmarkName = "Folder"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "F9293A72-4DA6-46B1-BAA0-CF4AD2DDDE89 - ea2cb115606f75a2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BoxButler.Folder.__allocating_init(folderName: Swift.String, contents: Swift.Optional&lt;Swift.Array&lt;BoxButler.Item&gt;&gt;) -&gt; BoxButler.Folder"
+                  moduleName = "BoxButler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/64014784/Desktop/Xcode/BoxButler/BoxButler/Folder.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  uuid = "F9293A72-4DA6-46B1-BAA0-CF4AD2DDDE89 - 2102e778295306"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "BoxButler.Folder.init(folderName: Swift.String, contents: Swift.Optional&lt;Swift.Array&lt;BoxButler.Item&gt;&gt;) -&gt; BoxButler.Folder"
+                  moduleName = "BoxButler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///var/folders/93/2rxx8m_10g94ztqhv01r0d_h0000gp/T/swift-generated-sources/@__swiftmacro_9BoxButler6Folder5ModelfMm_.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2"
+                  endingLineNumber = "2"
+                  offsetFromSymbolStart = "68">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8DF1A315-6AAF-4844-982D-58883FF8FC7E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BoxButler/ItemsListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "ItemsListView"
+            landmarkType = "14">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
