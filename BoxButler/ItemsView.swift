@@ -66,13 +66,13 @@ struct ItemsView: View {
         
     }
     func addItem() {
-        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", selected: 0)
+        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", itemDetails: "", selected: 0)
         modelContext.insert(item)
         navPath.append(item)
     }
     
     func addFolderItem(folder: Folder){
-        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", selected: 0)
+        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", itemDetails: "", selected: 0)
         folder.contents.append(item)
         navPath.append(item)
     }

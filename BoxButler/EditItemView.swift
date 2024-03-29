@@ -11,14 +11,6 @@ struct EditItemView: View {
     @Bindable var item: Item
     @Query var folders: [Folder]
     
-    var numberFormatter: NumberFormatter = {
-       let formatter = NumberFormatter()
-       //formatter.numberStyle = .currency
-       return formatter
-    }()
-
-    
-    
     var body: some View {
         
         Form {
@@ -50,7 +42,7 @@ struct EditItemView: View {
             }
             
             Section("Notes"){
-                Text(item.folderName)
+                TextField("Details about this Item", text: $item.itemDetails, axis: .vertical)
             }
             
         }

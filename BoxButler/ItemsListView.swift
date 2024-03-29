@@ -77,6 +77,13 @@ struct ItemsListView: View {
                 item.itemName.localizedStandardContains(searchString)
             }
         })
+        _folders = Query(filter: #Predicate { item in
+            if searchString.isEmpty {
+                true
+            } else {
+                item.folderName.localizedStandardContains(searchString)
+            }
+        })
     }
     
     func deleteItems(at offsets: IndexSet) {

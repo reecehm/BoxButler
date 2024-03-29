@@ -14,13 +14,15 @@ class Item: Hashable, Equatable {
     var quantity: String
     var price: Decimal = 0.0
     var folderName: String
+    var itemDetails: String
     var selected = 0
     
-    init(itemName: String, quantity: String, price: Decimal = 0.0, folderName: String, selected: Int) {
+    init(itemName: String, quantity: String, price: Decimal = 0.0, folderName: String, itemDetails: String, selected: Int) {
         self.itemName = itemName
         self.quantity = quantity
         self.price = price
         self.folderName = folderName
+        self.itemDetails = itemDetails
         self.selected = selected
     }
 }
