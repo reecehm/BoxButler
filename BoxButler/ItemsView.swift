@@ -16,7 +16,14 @@ struct ItemsView: View {
     
     var body: some View {
             ZStack {
-                    NavigationStack(path: $navPath){
+                NavigationStack(path: $navPath){
+                        if !items.isEmpty || !folders.isEmpty {
+                        Text("Swipe left to delete items.")
+                            .foregroundColor(Color.gray)
+                            .multilineTextAlignment(.leading)
+                            .padding(.leading, -165.0)
+                            .padding(.top, 2)
+                        }
                             ItemsListView()
                                 .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
                                 .navigationDestination(for: Folder.self) {folder in EditFolderView(folder: folder)
@@ -33,11 +40,10 @@ struct ItemsView: View {
                                     Button("Add Item", systemImage: "plus", action: addItem)
                                 }
                     }
-                    .navigationTitle("Box Butler")
                     .sheet(isPresented: $isShowingFolderSheet, content: {
                         addFolderSheet()
                     })
-                
+                    .navigationTitle("Box Butler")
                 HStack {
                     Spacer()
                         .frame(width: 255)

@@ -29,13 +29,7 @@ struct ItemsListView: View {
 
     
     var body: some View {
-        if !items.isEmpty || !folders.isEmpty {
-            Text("Swipe left to delete items.")
-                .foregroundColor(Color.gray)
-                .multilineTextAlignment(.leading)
-                .padding(.leading, -165.0)
-                .padding(.top, 2)
-            }
+    
             List {
                 ForEach(items) { item in
                     let decimalString = "\(item.price)"

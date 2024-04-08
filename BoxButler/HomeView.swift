@@ -15,40 +15,42 @@ struct HomeView: View {
     
     var body: some View {
             VStack{
-                HStack{
-                    Spacer()
-                    Text("Not in an Organization? Click here to join a group.")
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .frame(width: 230
-                               , height: 75
-                        )
-                        .background(Rectangle().fill(Color(.lightGray)))
-                         .cornerRadius(10)
-                    Spacer()
-                    VStack{
-                        Text("Username")
-                            .foregroundColor(Color.white)
-                            .fixedSize(horizontal: false, vertical: true)
-                               .multilineTextAlignment(.center)
-                               .padding()
-                               .frame(width: 120
-                                      , height: 40
-                               )
-                               .background(Rectangle().fill(Color(tanColor)))
-                                .cornerRadius(10)
-                        Text("Group")
-                            .foregroundColor(Color.white)
-                            .fixedSize(horizontal: false, vertical: true)
-                               .multilineTextAlignment(.center)
-                               .padding()
-                               .frame(width: 120
-                                      , height: 40
-                               )
-                               .background(Rectangle().fill(Color(tanColor)))
-                                   .cornerRadius(10)
+                ZStack {
+                    HStack{
+                        Spacer()
+                        Text("Not in an Organization? Click here to join a group.")
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .frame(width: 230
+                                   , height: 88
+                            )
+                            .background(Rectangle().fill(.thinMaterial))
+                             .cornerRadius(10)
+                        Spacer()
+                        VStack{
+                            Text("Username")
+                                .foregroundColor(Color.white)
+                                .fixedSize(horizontal: false, vertical: true)
+                                   .multilineTextAlignment(.center)
+                                   .padding()
+                                   .frame(width: 120
+                                          , height: 40
+                                   )
+                                   .background(Rectangle().fill(Color(tanColor)))
+                                    .cornerRadius(10)
+                            Text("Group")
+                                .foregroundColor(Color.white)
+                                .fixedSize(horizontal: false, vertical: true)
+                                   .multilineTextAlignment(.center)
+                                   .padding()
+                                   .frame(width: 120
+                                          , height: 40
+                                   )
+                                   .background(Rectangle().fill(Color(tanColor)))
+                                       .cornerRadius(10)
+                        }
+                        Spacer()
                     }
-                    Spacer()
                 }
                 Spacer()
                 HStack{
