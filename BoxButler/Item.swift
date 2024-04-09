@@ -16,6 +16,7 @@ class Item: Hashable, Equatable {
     var folderName: String
     var itemDetails: String
     var selected = 0
+    @Attribute(.externalStorage) var photo: Data?
     
     init(itemName: String, quantity: String, price: Decimal = 0.0, folderName: String, itemDetails: String, selected: Int) {
         self.itemName = itemName
