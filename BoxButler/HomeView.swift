@@ -4,11 +4,13 @@
 //
 //  Created by 64014784 on 3/5/24.
 //
-
+import SwiftData
 import SwiftUI
 
 struct HomeView: View {
-    
+    @Environment(\.modelContext) var modelContext
+    @Query var items: [Item]
+
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
     
     let greyColor = Color(red: 0.9137, green: 0.9137, blue: 0.9215)
@@ -52,71 +54,14 @@ struct HomeView: View {
                         Spacer()
                     }
                 }
+                HStack {
+                    VStack {
+                        Text("Number of Items")
+                        Text(String(items.count))
+                    }
+                }
+                
                 Spacer()
-                HStack{
-                    Button {
-                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
-                    } label:{
-                        VStack {
-                        Text("Recents")
-                            .fontWeight(.bold)
-                            .buttonStyle(.borderedProminent)
-                            .padding()
-                        Image(systemName: "clock.arrow.circlepath")
-                            .resizable()
-                            .frame(width:70, height: 63)
-                    }
-                    .frame(width: 150, height: 200)
-                    }
-                    .buttonStyle(.bordered)
-                    Button {
-                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
-                    } label:{
-                        VStack {
-                            Text("Folders")
-                                .fontWeight(.bold)
-                                .buttonStyle(.borderedProminent)
-                                .padding()
-                            Image(systemName: "folder")
-                                .resizable()
-                                .frame(width:71, height: 57)
-                        }
-                        .frame(width: 150, height: 200)
-                    }
-                    .buttonStyle(.bordered)
-                }
-                HStack{
-                    Button {
-                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
-                    } label:{
-                        VStack {
-                            Text("Scan")
-                                .fontWeight(.bold)
-                                .buttonStyle(.borderedProminent)
-                                .padding()
-                            Image(systemName: "camera")
-                                .resizable()
-                                .frame(width:66, height: 52)
-                        }
-                        .frame(width: 150, height: 200)
-                    }
-                    .buttonStyle(.bordered)
-                    Button {
-                        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/ /*@END_MENU_TOKEN@*/
-                    } label:{
-                        VStack {
-                            Text("Changes")
-                                .fontWeight(.bold)
-                                .buttonStyle(.borderedProminent)
-                                .padding()
-                            Image(systemName: "book")
-                                .resizable()
-                                .frame(width:60, height: 50)
-                        }
-                        .frame(width: 150, height: 200)
-                    }
-                    .buttonStyle(.bordered)
-                }
             }
             
         
