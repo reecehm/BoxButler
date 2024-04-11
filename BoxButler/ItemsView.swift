@@ -6,42 +6,34 @@
 //
 import SwiftData
 import SwiftUI
+import PhotosUI
 
 struct ItemsView: View {
     @Environment(\.modelContext) var modelContext
-    @State private var isShowingFolderSheet = false
+    @State private var isShowingSelectionSheet = false
     @State private var navPath = NavigationPath()
-    @Query var folders: [Folder]
+    @Query var boxes: [Box]
     @Query var items: [Item]
+    @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
     
     var body: some View {
             ZStack {
                 NavigationStack(path: $navPath){
-                        if !items.isEmpty || !folders.isEmpty {
+                        if !items.isEmpty || !boxes.isEmpty {
                         Text("Swipe left to delete items.")
                             .foregroundColor(Color.gray)
                             .multilineTextAlignment(.leading)
                             .padding(.leading, -165.0)
                             .padding(.top, 2)
                         }
-                            ItemsListView()
-                                .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
-                                .navigationDestination(for: Folder.self) {folder in EditFolderView(folder: folder)
-                                        .toolbar {
-                                            ToolbarItemGroup(placement: .topBarTrailing) {
-                                                Button("Add Item", systemImage: "plus", action:{
-                                                    addFolderItem(folder: folder)
-                                                }
-                                                )
-                                            }
-                                        }
-                                }
-                                .toolbar {
-                                    Button("Add Item", systemImage: "plus", action: addItem)
-                                }
+                        ItemsListView()
+                            .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
+                            .navigationDestination(for: Box.self) {box in EditBoxView(box: box)}
                     }
-                    .sheet(isPresented: $isShowingFolderSheet, content: {
-                        addFolderSheet()
+                    .sheet(isPresented: $isShowingSelectionSheet, content: {
+                        selectionSheet(isShowingSelectionSheet: $isShowingSelectionSheet)
+                            .presentationDetents([.height(200), .medium, .large])
+
                     })
                     .navigationTitle("Box Butler")
                 HStack {
@@ -50,15 +42,12 @@ struct ItemsView: View {
                     VStack {
                         Spacer()
                             .frame(height: 600)
-                            Button(action: { isShowingFolderSheet = true
-                                for item in items {
-                                    item.selected = 0
-                                    }
+                            Button(action: { isShowingSelectionSheet = true
                             }) {
-                                Image(systemName: "folder.badge.plus")
+                                Image(systemName: "plus")
                                     .frame(minWidth: 0, maxWidth: 40)
                                     .frame(minHeight: 0, maxHeight: 40)
-                                    .font(.system(size: 18))
+                                    .font(.system(size: 26))
                                     .padding()
                                     .foregroundColor(.white)
 
@@ -71,102 +60,172 @@ struct ItemsView: View {
             }
         
     }
-    func addItem() {
-        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", itemDetails: "", selected: 0)
+    func addItem() -> Item {
+        let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
         modelContext.insert(item)
-        navPath.append(item)
+        return item
     }
     
-    func addFolderItem(folder: Folder){
-        let item = Item(itemName: "", quantity: "", price: 0, folderName: "", itemDetails: "", selected: 0)
-        folder.contents.append(item)
-        navPath.append(item)
+    struct selectionSheet: View {
+        @Environment(\.modelContext) var modelContext
+        @Environment(\.dismiss) private var dismiss
+        @State private var isShowingItemSheet = false
+        @State private var isShowingBoxSheet = false
+        @Binding var isShowingSelectionSheet: Bool
+        @Query var boxes: [Box]
+        @Query var items: [Item]
+        @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
+        @State var currentBox: Box = Box(boxName: "", boxQuantity: 0, price: 0.0, boxDetails: "", location: "")
+
+        var body: some View{
+            NavigationStack{
+                Button{
+                    currentItem = addItem()
+                    isShowingItemSheet = true
+                } label:{
+                    Image(systemName: "pencil")
+                    Text("Add Item")
+                        .padding(.horizontal, 40)
+                        .padding(.vertical, 15)
+
+                }
+                .buttonStyle(.borderedProminent)
+                Button{
+                    currentBox = addBox()
+                    isShowingBoxSheet = true
+                } label: {
+                    Image(systemName: "shippingbox.fill")
+                    Text("Add Box")
+                        .padding(.horizontal, 40)
+                        .padding(.vertical, 15)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .sheet(isPresented: $isShowingItemSheet, content: {
+                addItemSheet(item: currentItem)
+            })
+            .sheet(isPresented: $isShowingBoxSheet, content: {
+                addBoxSheet(box: currentBox)
+            })
+            
+        }
+        func addItem() -> Item {
+            let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
+            modelContext.insert(item)
+            return item
+        }
+        func addBox() -> Box {
+            let box = Box(boxName: "", boxQuantity: 0, price: 0.0, boxDetails: "", location: "")
+            modelContext.insert(box)
+            return box
+        }
     }
     
-    struct addFolderSheet: View {
+    struct addItemSheet: View {
         @Environment(\.dismiss) private var dismiss
         @Environment(\.modelContext) var modelContext
-        @State private var assigning: [Item] = []
-        @State private var name: String = ""
-        @State var index: Int = 0
         @Query var items: [Item]
+        @Bindable var item: Item
+        @State private var selectedItem: PhotosPickerItem?
         
         
-    var body: some View {
-        NavigationStack{
-            Form {
-                Section{
-                    TextField("Folder Name", text: $name)
-                }
-                Section("Select Items to Sort"){
-                    List{
-                        ForEach(items) { item in
-                            
-                            Button(action: {
-                                if item.selected == 0 {
-                                    item.selected = 1
-                                    assigning.append(item)
-                                }
-                                else {
-                                    item.selected = 0
-                                    index = assigning.firstIndex(of: item)!
-                                    assigning.remove(at : index)
-                                    
-                                }
-                            }) {
-                                HStack{
-                                    Text(item.itemName)
-                                    if !assigning.isEmpty && assigning.contains(item) == true {
-                                        Image(systemName: "checkmark")
-                                        .foregroundColor(.blue)}
-                                    else{
-                                        Image(systemName: "checkmark")
-                                            .opacity(0.0)
-                                    }
-                                }
-                            }
+        var body: some View {
+            NavigationStack{
+                Form {
+                    Section{
+                        if let imageData = item.photo, let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                        }
+                        
+                        PhotosPicker(selection: $selectedItem, matching: .images) {
+                            Label("Select a photo",systemImage: "camera.on.rectangle")
                         }
                     }
+                    
+                    Section {
+                        TextField("Item Name", text: $item.itemName)
+                        TextField("Quantity", text: $item.quantity)
+                        TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                    }
+                    
+                    Section("Notes"){
+                        TextField("Details about this Item", text: $item.itemDetails, axis: .vertical)
+                    }
+                    
                 }
-            }
-            .navigationTitle("New Folder")
-            .toolbar {
-                ToolbarItemGroup(placement: .topBarLeading) {
-                    Button("Cancel") {for item in items {
-                        item.selected = 0
-                        }
-                        dismiss()}
-                }
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button{
-                        let folder = Folder(folderName: name, contents: assigning, id: UUID())
-                            modelContext.insert(folder)
-                            for item in assigning {
-                                item.folderName = folder.folderName
-                            }
-                            for item in items {
-                                item.selected = 0
+                .navigationTitle("Edit Item")
+                .navigationBarTitleDisplayMode(.inline)
+                .onChange(of: selectedItem, loadPhoto)
+                .toolbar {
+                    ToolbarItemGroup(placement: .topBarLeading) {
+                        Button ("Cancel") {
+                            if item.itemName == "" && item.quantity == "" && item.price == 0.0 && item.itemDetails == "" && item.location == "" {
+                                modelContext.delete(item)
                             }
                             dismiss()
-                    } label: {
-                        Text("Save")
+                        }
+                    }
+                    ToolbarItemGroup(placement: .topBarTrailing){
+                        Button("Save") {
+                            if item.itemName == ""{
+                                item.itemName = "Unnamed Item"
+                            }
+                            dismiss()
+                        }
                     }
                 }
             }
         }
-    }
-    }
-    
-    func itemExists(item: Item) -> Bool{
-        for Folder in folders{
-            for Item in Folder.contents{
-                if Item == item {
-                    return true
-                }
+        
+        
+        
+        func loadPhoto () {
+            Task { @MainActor in
+                item.photo = try await
+                selectedItem?.loadTransferable(type: Data.self)
             }
         }
-        return false
     }
+    
+    struct addBoxSheet: View{
+        @Environment(\.dismiss) private var dismiss
+        @Environment(\.modelContext) var modelContext
+        @Bindable var box: Box
+        @State private var selectedItem: PhotosPickerItem?
+        
+        var body: some View{
+            Form {
+                Section{
+                    if let imageData = box.photo, let uiImage = UIImage(data: imageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                    }
+                    
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+                        Label("Select a photo",systemImage: "camera.on.rectangle")
+                    }
+                }
+                Section ("Box Name") {
+                    TextField("Box Name", text: $box.boxName)
+                }
+            }
+            .navigationTitle("Edit Folder")
+            .onChange(of: selectedItem, loadPhoto)
+        }
+        
+        func loadPhoto () {
+            Task { @MainActor in
+                box.photo = try await
+                selectedItem?.loadTransferable(type: Data.self)
+            }
+        }
+        
+    }
+    
+    
 }
 
 

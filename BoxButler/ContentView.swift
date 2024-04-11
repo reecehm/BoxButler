@@ -29,7 +29,7 @@ struct ContentView: View {
                     ItemsView()
                         .tabItem{
                             Image(systemName: "shippingbox")
-                            Text("Items")
+                            Text("Shelf")
                         }
                     SearchView()
                         .tabItem{
