@@ -13,17 +13,15 @@ class Item: Hashable, Equatable {
     var itemName: String
     var quantity: String
     var price: Decimal = 0.0
-    var folderName: String
     var itemDetails: String
-    var selected = 0
+    var location: String
     @Attribute(.externalStorage) var photo: Data?
     
-    init(itemName: String, quantity: String, price: Decimal = 0.0, folderName: String, itemDetails: String, selected: Int) {
+    init(itemName: String, quantity: String, price: Decimal = 0.0, itemDetails: String, location: String) {
         self.itemName = itemName
         self.quantity = quantity
         self.price = price
-        self.folderName = folderName
         self.itemDetails = itemDetails
-        self.selected = selected
+        self.location = location
     }
 }

@@ -40,6 +40,6 @@ struct BoxButlerApp: App {
                    }
             }
         }
-        .modelContainer(for: [Item.self, Folder.self])
+        .modelContainer(for: [Item.self, Box.self])
     }
 }

@@ -25,35 +25,29 @@ extension String {
 struct ItemsListView: View {
     @Environment(\.modelContext) var modelContext
     @Query var items: [Item]
-    @Query var folders: [Folder]
+    @Query var boxes: [Box]
 
     
     var body: some View {
     
             List {
                 ForEach(items) { item in
-                    let decimalString = "\(item.price)"
-                    if itemInFolder(item: item) == false {
-                        NavigationLink(value: item) {
-                            HStack{
-                                Text(item.itemName)
-                                Spacer()
-                                Text(decimalString.currencyFormatting())
-                            }
-                        }
+                    NavigationLink(value: item){
+                        Image(systemName: "pencil")
+                        Text(item.itemName)
                     }
                 }
                 .onDelete(perform: deleteItems)
-                ForEach(folders) { folder in
-                    NavigationLink(value: folder) {
-                        Image(systemName: "folder.fill")
-                        Text(folder.folderName)
-                        }
+                ForEach(boxes) { box in
+                    NavigationLink(value: box){
+                        Image(systemName: "shippingbox.fill")
+                        Text(box.boxName)
                     }
-                .onDelete(perform: deleteFolders)
+                }
+                .onDelete(perform: deleteBoxes)
             }
             .overlay{
-                if items.isEmpty && folders.isEmpty {
+                if items.isEmpty && boxes.isEmpty{
                     ContentUnavailableView(label: {
                         Label("No Items", systemImage: "circle.grid.3x3.fill")
                     }, description: {
@@ -71,13 +65,6 @@ struct ItemsListView: View {
                 item.itemName.localizedStandardContains(searchString)
             }
         })
-        _folders = Query(filter: #Predicate { item in
-            if searchString.isEmpty {
-                true
-            } else {
-                item.folderName.localizedStandardContains(searchString)
-            }
-        })
     }
     
     func deleteItems(at offsets: IndexSet) {
@@ -86,26 +73,15 @@ struct ItemsListView: View {
             modelContext.delete(item)
         }
     }
-    func deleteFolders(at offsets: IndexSet) {
+    func deleteBoxes(at offsets: IndexSet) {
         for offsets in offsets {
-            let folder = folders[offsets]
-            modelContext.delete(folder)
+            let box = boxes[offsets]
+            modelContext.delete(box)
         }
-    }
-    
-    func itemInFolder(item: Item) -> Bool{
-        for Folder in folders{
-            for Item in Folder.contents{
-                if Item == item {
-                    return true
-                }
-            }
-        }
-        return false
     }
 }
 
 
-#Preview {
-    ItemsListView()
-}
+//#Preview {
+//    ItemsListView()
+//}
