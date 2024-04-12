@@ -11,13 +11,13 @@ import SwiftData
 @Model
 class Box: Hashable, Identifiable {
     var boxName: String
-    var boxQuantity: Int
+    var boxQuantity: String
     var price: Decimal = 0.0
     var boxDetails: String
-    var location: String
+    var location: [LocationTag] = []
     @Attribute(.externalStorage) var photo: Data?
     
-    init(boxName: String, boxQuantity: Int, price: Decimal, boxDetails: String, location: String) {
+    init(boxName: String, boxQuantity: String, price: Decimal, boxDetails: String, location: [LocationTag]) {
         self.boxName = boxName
         self.boxQuantity = boxQuantity
         self.price = price

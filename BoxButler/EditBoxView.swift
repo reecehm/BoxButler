@@ -30,6 +30,8 @@ struct EditBoxView: View {
             }
             Section ("Box Name") {
                 TextField("Box Name", text: $box.boxName)
+                TextField("Units Per Box", text: $box.boxQuantity)
+                TextField("Price", value: $box.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
             }
         }
         .navigationTitle("Edit Box")

@@ -8,16 +8,17 @@ import SwiftData
 import SwiftUI
 import PhotosUI
 
-struct ItemsView: View {
+struct ShelfView: View {
     @Environment(\.modelContext) var modelContext
     @State private var isShowingSelectionSheet = false
     @State private var navPath = NavigationPath()
     @Query var boxes: [Box]
     @Query var items: [Item]
-    @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
+    @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
     
     var body: some View {
             ZStack {
+                Color.clear
                 NavigationStack(path: $navPath){
                         if !items.isEmpty || !boxes.isEmpty {
                         Text("Swipe left to delete items.")
@@ -27,9 +28,11 @@ struct ItemsView: View {
                             .padding(.top, 2)
                         }
                         ItemsListView()
-                            .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
-                            .navigationDestination(for: Box.self) {box in EditBoxView(box: box)}
+                        .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
+                        .navigationDestination(for: Box.self) {box in EditBoxView(box: box)}
                     }
+                    .ignoresSafeArea(.keyboard, edges: .bottom)
+                    .navigationTitle("Box Butler")
                     .sheet(isPresented: $isShowingSelectionSheet, content: {
                         selectionSheet(isShowingSelectionSheet: $isShowingSelectionSheet)
                             .presentationDetents([.height(200), .medium, .large])
@@ -58,13 +61,10 @@ struct ItemsView: View {
                     }
                 }
             }
+            .ignoresSafeArea(.keyboard)
         
     }
-    func addItem() -> Item {
-        let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
-        modelContext.insert(item)
-        return item
-    }
+
     
     struct selectionSheet: View {
         @Environment(\.modelContext) var modelContext
@@ -74,8 +74,8 @@ struct ItemsView: View {
         @Binding var isShowingSelectionSheet: Bool
         @Query var boxes: [Box]
         @Query var items: [Item]
-        @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
-        @State var currentBox: Box = Box(boxName: "", boxQuantity: 0, price: 0.0, boxDetails: "", location: "")
+        @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
+        @State var currentBox: Box = Box(boxName: "", boxQuantity: "", price: 0.0, boxDetails: "", location: [])
 
         var body: some View{
             NavigationStack{
@@ -110,12 +110,12 @@ struct ItemsView: View {
             
         }
         func addItem() -> Item {
-            let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: "")
+            let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
             modelContext.insert(item)
             return item
         }
         func addBox() -> Box {
-            let box = Box(boxName: "", boxQuantity: 0, price: 0.0, boxDetails: "", location: "")
+            let box = Box(boxName: "", boxQuantity: "", price: 0.0, boxDetails: "", location: [])
             modelContext.insert(box)
             return box
         }
@@ -127,6 +127,7 @@ struct ItemsView: View {
         @Query var items: [Item]
         @Bindable var item: Item
         @State private var selectedItem: PhotosPickerItem?
+        @State private var isShowingAddLocationSheet = false
         
         
         var body: some View {
@@ -149,7 +150,12 @@ struct ItemsView: View {
                         TextField("Quantity", text: $item.quantity)
                         TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                     }
-                    
+                    Button("Add Location Tag"){
+                        isShowingAddLocationSheet = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .background(.red)
+                    .cornerRadius(10)
                     Section("Notes"){
                         TextField("Details about this Item", text: $item.itemDetails, axis: .vertical)
                     }
@@ -161,7 +167,7 @@ struct ItemsView: View {
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarLeading) {
                         Button ("Cancel") {
-                            if item.itemName == "" && item.quantity == "" && item.price == 0.0 && item.itemDetails == "" && item.location == "" {
+                            if item.itemName == "" && item.quantity == "" && item.price == 0.0 && item.itemDetails == "" && item.location == [] {
                                 modelContext.delete(item)
                             }
                             dismiss()
@@ -177,10 +183,10 @@ struct ItemsView: View {
                     }
                 }
             }
+            .sheet(isPresented: $isShowingAddLocationSheet, content: {
+                AddItemLocationSheet(item: item)
+            })
         }
-        
-        
-        
         func loadPhoto () {
             Task { @MainActor in
                 item.photo = try await
@@ -196,24 +202,46 @@ struct ItemsView: View {
         @State private var selectedItem: PhotosPickerItem?
         
         var body: some View{
-            Form {
-                Section{
-                    if let imageData = box.photo, let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
+            NavigationStack{
+                Form {
+                    Section{
+                        if let imageData = box.photo, let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                        }
+                        
+                        PhotosPicker(selection: $selectedItem, matching: .images) {
+                            Label("Select a photo",systemImage: "camera.on.rectangle")
+                        }
                     }
-                    
-                    PhotosPicker(selection: $selectedItem, matching: .images) {
-                        Label("Select a photo",systemImage: "camera.on.rectangle")
+                    Section ("Box Name") {
+                        TextField("Box Name", text: $box.boxName)
+                        TextField("Units Per Box", text: $box.boxQuantity)
+                        TextField("Price", value: $box.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                     }
                 }
-                Section ("Box Name") {
-                    TextField("Box Name", text: $box.boxName)
+                .navigationTitle("Edit Box")
+                .onChange(of: selectedItem, loadPhoto)
+                .toolbar {
+                    ToolbarItemGroup(placement: .topBarLeading) {
+                        Button ("Cancel") {
+                            if box.boxName == "" && box.boxQuantity == "" && box.price == 0.0 && box.boxDetails == "" && box.location == [] {
+                                modelContext.delete(box)
+                            }
+                            dismiss()
+                        }
+                    }
+                    ToolbarItemGroup(placement: .topBarTrailing){
+                        Button("Save") {
+                            if box.boxName == ""{
+                                box.boxName = "Unnamed Box"
+                            }
+                            dismiss()
+                        }
+                    }
                 }
             }
-            .navigationTitle("Edit Folder")
-            .onChange(of: selectedItem, loadPhoto)
         }
         
         func loadPhoto () {
@@ -230,5 +258,5 @@ struct ItemsView: View {
 
 
 #Preview {
-    ItemsView()
+    ShelfView()
 }
