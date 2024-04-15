@@ -14,8 +14,6 @@ struct EditItemView: View {
     @State private var selectedItem: PhotosPickerItem?
     
     var body: some View {
-            VStack{
-                
                 Form {
                     Section{
                         if let imageData = item.photo, let uiImage = UIImage(data: imageData) {
@@ -39,7 +37,6 @@ struct EditItemView: View {
                     }
                 }
                 .onChange(of: selectedItem, loadPhoto)
-            }
         }
     
     

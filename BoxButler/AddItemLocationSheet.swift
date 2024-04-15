@@ -12,11 +12,19 @@ struct AddItemLocationSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) var modelContext
     @Query var items: [Item]
+    @Query var tags: [LocationTag]
     @Bindable var item: Item
     @State var tag: String = ""
     
     var body: some View {
-            Form{
+            VStack{
+                Button ("Done") {
+                    dismiss()
+                }
+                .padding(.top, 10)
+                .padding(.bottom, 5)
+                
+                Form{
                 Section{
                     TextField("Type Tag Name", text: $tag)
                 }
@@ -27,30 +35,48 @@ struct AddItemLocationSheet: View {
             }
             .disabled(tag.isEmpty)
             .buttonStyle(.borderedProminent)
-            .background(.red)
             .cornerRadius(10)
+            Divider()
             HStack{
                 VStack{
-                    Text("Available Tags")
-                        .multilineTextAlignment(.leading)
-                        .bold()
-                    ForEach(items) { item in
-                        ForEach(item.location) { tag in
-                            Text(tag.name)
-                                .padding(.leading, 10)
-                                .foregroundColor(Color.white)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .multilineTextAlignment(.center)
-                                .padding()
-                                .frame(height: 27)
-                                .background(Rectangle().fill(Color(.gray))
-                                    .opacity(0.5))
-                                    .cornerRadius(10)
+                    HStack{
+                        Text("Available Tags")
+                            .multilineTextAlignment(.leading)
+                            .bold()
+                            .padding(.leading)
+                        Spacer()
+                    }
+                        ForEach(items) { item in
+                            ForEach(item.location) { tag in
+                                HStack{
+                                    Text(tag.name)
+                                        .foregroundColor(Color.white)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .multilineTextAlignment(.center)
+                                        .padding()
+                                        .frame(height: 27)
+                                        .background(Rectangle().fill(Color(.gray))
+                                            .opacity(0.5))
+                                        .cornerRadius(10)
+                                        .padding(.leading)
+                                    Spacer()
+                                }
+                            }
+                        }
+                    .overlay{
+                        if tags.isEmpty {
+                            ContentUnavailableView(label: {
+                                Label("No Tags", systemImage: "tag.fill")
+                            })
                         }
                     }
                 }
                 Spacer()
             }
+                Divider()
+                Spacer()
+            }
+        
         
     }
     

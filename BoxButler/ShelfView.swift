@@ -28,7 +28,12 @@ struct ShelfView: View {
                             .padding(.top, 2)
                         }
                         ItemsListView()
-                        .navigationDestination(for: Item.self) {item in EditItemView(item: item)}
+                        .navigationDestination(for: Item.self) {item in 
+                            ZStack{
+                                Color.clear
+                                EditItemView(item: item)}
+                            }
+                            .ignoresSafeArea(.keyboard)
                         .navigationDestination(for: Box.self) {box in EditBoxView(box: box)}
                     }
                     .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -62,7 +67,6 @@ struct ShelfView: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
-        
     }
 
     

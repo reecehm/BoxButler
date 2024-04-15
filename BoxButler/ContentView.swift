@@ -18,36 +18,42 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            TabView{
-                HomeView()
-                    .tabItem{
-                        Image(systemName: "house.fill")
-                            .foregroundColor(Color.white)
-                        Text("Home")
-                            .foregroundColor(Color.white)
-                    }
-                ShelfView()
-                    .tabItem{
-                        Image(systemName: "shippingbox")
-                        Text("Shelf")
-                    }
-                SearchView()
-                    .tabItem{
-                        Image(systemName: "magnifyingglass")
-                        Text("Search")
-                    }
-                ScannerView()
-                    .tabItem{
-                        Image(systemName: "barcode.viewfinder")
-                        Text("Scan")
-                    }
-                SettingsView()
-                    .tabItem{
-                        Image(systemName: "gear")
-                        Text("Settings")
-                    }
-                
+            ZStack{
+                Color.clear
+                TabView{
+                    HomeView()
+                        .tabItem{
+                            Image(systemName: "house.fill")
+                                .foregroundColor(Color.white)
+                            Text("Home")
+                                .foregroundColor(Color.white)
+                        }
+                    ShelfView()
+                        .tabItem{
+                            Image(systemName: "shippingbox")
+                            Text("Shelf")
+                        }
+                        .ignoresSafeArea(.keyboard)
+                    SearchView()
+                        .tabItem{
+                            Image(systemName: "magnifyingglass")
+                            Text("Search")
+                        }
+                    ScannerView()
+                        .tabItem{
+                            Image(systemName: "barcode.viewfinder")
+                            Text("Scan")
+                        }
+                    SettingsView()
+                        .tabItem{
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
+                    
+                }
             }
+            .ignoresSafeArea(.keyboard)
+            
         }
     }
 }
