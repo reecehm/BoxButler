@@ -28,9 +28,7 @@ struct HomeView: View {
                     Text("Not in an Organization? Click here to join a group.")
                         .multilineTextAlignment(.center)
                         .padding()
-                        .frame(width: 230
-                               , height: 88
-                        )
+                        .frame(width: 230, height: 88)
                         .background(Rectangle().fill(.thinMaterial))
                         .cornerRadius(10)
                     Spacer()
@@ -60,29 +58,53 @@ struct HomeView: View {
                 }
             }
             HStack {
-                
+                Divider()
                 VStack {
                     Text("Items")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
                     Text(String(items.count))
                 }
                 Divider()
                 VStack {
                     Text("Boxes")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
                     Text(String(boxes.count))
                 }
                 Divider()
                 VStack {
-                    Text("Total Quantity")
+                    Text("Total Quantity In Inventory")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
                     Text(String(totalQuantity))
                 }
                 Divider()
                 VStack {
-                    Text("Total Inventory Value")
+                    Text("Total Value In Inventory")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
                     Text("$" + "\(String(describing: totalInventoryValue))")
                 }
+                Divider()
             }
-            
-            
+            .frame(height: 88)
+            .background(Rectangle().fill(.thinMaterial))
+            .cornerRadius(10)
+            HStack {
+                HStack {
+                    Text("Notifications")
+                        .font(.headline)
+                        .padding(.leading, 10)
+                        .padding(.trailing, 10)
+                }            
+                .frame(height: 35)
+                .background(Rectangle().fill(.thinMaterial))
+                .cornerRadius(10)
+                .padding(.leading, 10)
+
+                Spacer()
+            }
             
             Spacer()
         }
