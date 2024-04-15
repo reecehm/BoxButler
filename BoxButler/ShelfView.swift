@@ -152,7 +152,10 @@ struct ShelfView: View {
                     Section {
                         TextField("Item Name", text: $item.itemName)
                         TextField("Quantity", text: $item.quantity)
+                            .keyboardType(.numberPad)
                         TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                            .keyboardType(.numberPad)
+
                     }
                     Button("Add Location Tag"){
                         isShowingAddLocationSheet = true
