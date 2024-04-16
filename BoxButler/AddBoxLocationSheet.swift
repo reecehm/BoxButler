@@ -1,19 +1,18 @@
 //
-//  AddLocationSheet.swift
+//  AddBoxLocationSheet.swift
 //  BoxButler
 //
-//  Created by 64014784 on 4/11/24.
+//  Created by 64014784 on 4/15/24.
 //
 
 import SwiftUI
 import SwiftData
 
-struct AddItemLocationSheet: View {
+struct AddBoxLocationSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) var modelContext
-    @Query var items: [Item]
     @Query var tags: [LocationTag]
-    @Bindable var item: Item
+    @Bindable var box: Box
     @State var tagText: String = ""
     @State var tagIndex: Int = 0
     
@@ -38,18 +37,18 @@ struct AddItemLocationSheet: View {
                         Spacer()
                     }
                     HStack{
-                        if item.location.isEmpty {
+                        if box.location.isEmpty {
                             Text("No Active Tags")
                             Image(systemName: "tag.fill")
                         }
                     }
                     
                 }
-                ForEach(item.location) { tag in
+                ForEach(box.location) { tag in
                         HStack{
                             Button{
-                                tagIndex = item.location.firstIndex(of: tag)!
-                                item.location.remove(at: tagIndex)
+                                tagIndex = box.location.firstIndex(of: tag)!
+                                box.location.remove(at: tagIndex)
                                 modelContext.insert(tag)
                             } label: {
                                 Text(tag.name)
@@ -74,7 +73,7 @@ struct AddItemLocationSheet: View {
                     .padding()
             .frame(height: 100)
             Button("Add Tag") {
-                item.location.append(addTag())
+                box.location.append(addTag())
                 tagText = ""
             }
             .disabled(tagText.isEmpty)
@@ -101,10 +100,10 @@ struct AddItemLocationSheet: View {
                         
                     }
                             ForEach(tags) { tag in
-                                if !item.location.contains(tag){
+                                if !box.location.contains(tag){
                                     HStack{
                                         Button{
-                                            item.location.append(tag)
+                                            box.location.append(tag)
                                         } label: {
                                             Text(tag.name)
                                                 .foregroundColor(Color.white)
@@ -146,3 +145,4 @@ struct AddItemLocationSheet: View {
 //#Preview {
 //    AddItemLocationSheet()
 //}
+

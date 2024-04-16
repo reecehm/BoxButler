@@ -13,9 +13,10 @@ struct EditBoxView: View {
     @Bindable var box: Box
     @Query var items: [Item]
     @State private var selectedItem: PhotosPickerItem?
+    @Binding var isShowingAddLocationSheet: Bool
+
     
     var body: some View {
-        
         Form {
             Section{
                 if let imageData = box.photo, let uiImage = UIImage(data: imageData) {
@@ -32,6 +33,31 @@ struct EditBoxView: View {
                 TextField("Box Name", text: $box.boxName)
                 TextField("Units Per Box", text: $box.boxQuantity)
                 TextField("Price", value: $box.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+            }
+            Section{
+                HStack{
+                    Button{
+                        isShowingAddLocationSheet = true
+                    } label: {
+                        Text("Edit Location Tags")
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                }
+                ForEach(box.location) { tag in
+                    HStack{
+                        Text(tag.name)
+                            .foregroundColor(Color.white)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .frame(height: 27)
+                            .background(Rectangle().fill(Color(.red))
+                                .opacity(0.8))
+                            .cornerRadius(10)
+                        Spacer()
+                    }
+                }
             }
         }
         .navigationTitle("Edit Box")

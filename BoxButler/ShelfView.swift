@@ -15,6 +15,8 @@ struct ShelfView: View {
     @Query var boxes: [Box]
     @Query var items: [Item]
     @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
+    @State private var isShowingAddLocationSheet = false
+
     
     var body: some View {
             ZStack {
@@ -28,13 +30,15 @@ struct ShelfView: View {
                             .padding(.top, 2)
                         }
                         ItemsListView()
-                        .navigationDestination(for: Item.self) {item in 
-                            ZStack{
-                                Color.clear
-                                EditItemView(item: item)}
-                            }
-                            .ignoresSafeArea(.keyboard)
-                        .navigationDestination(for: Box.self) {box in EditBoxView(box: box)}
+                        .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet)
+                                .sheet(isPresented: $isShowingAddLocationSheet, content: {
+                                    AddItemLocationSheet(item: item)
+                                })}
+                        .navigationDestination(for: Box.self) {box in EditBoxView(box: box, isShowingAddLocationSheet: $isShowingAddLocationSheet)
+                                .sheet(isPresented: $isShowingAddLocationSheet, content: {
+                                    AddBoxLocationSheet(box: box)
+                                })}
+                        
                     }
                     .ignoresSafeArea(.keyboard, edges: .bottom)
                     .navigationTitle("Box Butler")
@@ -69,7 +73,6 @@ struct ShelfView: View {
             .ignoresSafeArea(.keyboard)
     }
 
-    
     struct selectionSheet: View {
         @Environment(\.modelContext) var modelContext
         @Environment(\.dismiss) private var dismiss
@@ -155,14 +158,33 @@ struct ShelfView: View {
                             .keyboardType(.numberPad)
                         TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                             .keyboardType(.numberPad)
-
+                        
                     }
-                    Button("Add Location Tag"){
-                        isShowingAddLocationSheet = true
+                    Section{
+                        HStack{
+                            Button{
+                                isShowingAddLocationSheet = true
+                            } label: {
+                                Text("Edit Location Tags")
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                        }
+                    ForEach(item.location) { tag in
+                        HStack{
+                            Text(tag.name)
+                                .foregroundColor(Color.white)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .frame(height: 27)
+                                .background(Rectangle().fill(Color(.red))
+                                    .opacity(0.8))
+                                .cornerRadius(10)
+                            Spacer()
+                        }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .background(.red)
-                    .cornerRadius(10)
+                }
                     Section("Notes"){
                         TextField("Details about this Item", text: $item.itemDetails, axis: .vertical)
                     }
@@ -207,6 +229,8 @@ struct ShelfView: View {
         @Environment(\.modelContext) var modelContext
         @Bindable var box: Box
         @State private var selectedItem: PhotosPickerItem?
+        @State private var isShowingAddLocationSheet = false
+
         
         var body: some View{
             NavigationStack{
@@ -227,6 +251,31 @@ struct ShelfView: View {
                         TextField("Units Per Box", text: $box.boxQuantity)
                         TextField("Price", value: $box.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                     }
+                    Section{
+                        HStack{
+                            Button{
+                                isShowingAddLocationSheet = true
+                            } label: {
+                                Text("Edit Location Tags")
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                        }
+                    ForEach(box.location) { tag in
+                        HStack{
+                            Text(tag.name)
+                                .foregroundColor(Color.white)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .frame(height: 27)
+                                .background(Rectangle().fill(Color(.red))
+                                    .opacity(0.8))
+                                .cornerRadius(10)
+                            Spacer()
+                        }
+                    }
+                }
                 }
                 .navigationTitle("Edit Box")
                 .onChange(of: selectedItem, loadPhoto)
@@ -249,6 +298,9 @@ struct ShelfView: View {
                     }
                 }
             }
+            .sheet(isPresented: $isShowingAddLocationSheet, content: {
+                AddBoxLocationSheet(box: box)
+            })
         }
         
         func loadPhoto () {

@@ -29,7 +29,7 @@ struct ItemsListView: View {
 
     
     var body: some View {
-    
+        
             List {
                 ForEach(items) { item in
                     NavigationLink(value: item){
@@ -46,6 +46,7 @@ struct ItemsListView: View {
                 }
                 .onDelete(perform: deleteBoxes)
             }
+        
             .overlay{
                 if items.isEmpty && boxes.isEmpty{
                     ContentUnavailableView(label: {
