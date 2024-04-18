@@ -14,7 +14,7 @@ struct ShelfView: View {
     @State private var navPath = NavigationPath()
     @Query var boxes: [Box]
     @Query var items: [Item]
-    @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
+    @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
     @State private var isShowingAddLocationSheet = false
 
     
@@ -81,7 +81,7 @@ struct ShelfView: View {
         @Binding var isShowingSelectionSheet: Bool
         @Query var boxes: [Box]
         @Query var items: [Item]
-        @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
+        @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
         @State var currentBox: Box = Box(boxName: "", boxQuantity: "", price: 0.0, boxDetails: "", location: [])
 
         var body: some View{
@@ -109,15 +109,15 @@ struct ShelfView: View {
                 .buttonStyle(.borderedProminent)
             }
             .sheet(isPresented: $isShowingItemSheet, content: {
-                addItemSheet(item: currentItem)
+                addItemSheet(item: currentItem, isShowingSelectionSheet: $isShowingSelectionSheet)
             })
             .sheet(isPresented: $isShowingBoxSheet, content: {
-                addBoxSheet(box: currentBox)
+                addBoxSheet(box: currentBox, isShowingSelectionSheet: $isShowingSelectionSheet)
             })
             
         }
         func addItem() -> Item {
-            let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [])
+            let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
             modelContext.insert(item)
             return item
         }
@@ -135,6 +135,7 @@ struct ShelfView: View {
         @Bindable var item: Item
         @State private var selectedItem: PhotosPickerItem?
         @State private var isShowingAddLocationSheet = false
+        @Binding var isShowingSelectionSheet: Bool
         
         
         var body: some View {
@@ -159,6 +160,11 @@ struct ShelfView: View {
                         TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                             .keyboardType(.numberPad)
                         
+                    }
+                    
+                    Section("Quantity Warning Threshold"){
+                        TextField("Min Level", text:$item.quantityWarn)
+                            .keyboardType(.numberPad)
                     }
                     Section{
                         HStack{
@@ -200,6 +206,7 @@ struct ShelfView: View {
                                 modelContext.delete(item)
                             }
                             dismiss()
+                            isShowingSelectionSheet = false
                         }
                     }
                     ToolbarItemGroup(placement: .topBarTrailing){
@@ -208,6 +215,7 @@ struct ShelfView: View {
                                 item.itemName = "Unnamed Item"
                             }
                             dismiss()
+                            isShowingSelectionSheet = false
                         }
                     }
                 }
@@ -230,6 +238,7 @@ struct ShelfView: View {
         @Bindable var box: Box
         @State private var selectedItem: PhotosPickerItem?
         @State private var isShowingAddLocationSheet = false
+        @Binding var isShowingSelectionSheet: Bool
 
         
         var body: some View{
@@ -286,6 +295,7 @@ struct ShelfView: View {
                                 modelContext.delete(box)
                             }
                             dismiss()
+                            isShowingSelectionSheet = false
                         }
                     }
                     ToolbarItemGroup(placement: .topBarTrailing){
@@ -294,6 +304,7 @@ struct ShelfView: View {
                                 box.boxName = "Unnamed Box"
                             }
                             dismiss()
+                            isShowingSelectionSheet = false
                         }
                     }
                 }

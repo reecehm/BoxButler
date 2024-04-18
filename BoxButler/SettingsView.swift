@@ -12,48 +12,26 @@ struct SettingsView: View {
 
         NavigationStack{
             ZStack {
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                    .foregroundStyle(.gray)
-                    .opacity(0.3)
-                HStack {
-                    Toggle(isOn: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Is On@*/.constant(true)/*@END_MENU_TOKEN@*/) {
-                        Text("Toggle")
-                            .font(.headline)
-                        
-                    }
-                    .padding(.trailing, 15.0)
-                    .padding(.leading, 20)
-                }
-                
-            }
-            .padding(.horizontal, 20)
-        .frame(width: 400, height: 50)
-        NavigationLink(destination: PreferencesView()) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                        .foregroundStyle(.gray)
-                        .opacity(0.3)
-                    HStack {
-                        Text("Preferences")
-                            .font(.headline)
-                            .foregroundColor(Color.black)
-                            .multilineTextAlignment(.leading)
-                            .padding(.leading, 20.0)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(Color.black)
-                            .padding(.trailing, 25.0)
+                Form {
+                    Section("Preferences"){
+                        HStack{
+                            Button{
+                                
+                            } label: {
+                                Text("Dark Mode")
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                        }
+
                         
                     }
                     
+                    
                 }
             }
-            .padding(.horizontal, 20)
-            .frame(width: 400, height: 50)
         }
-        
     }
-
 }
 
 #Preview {

@@ -32,7 +32,14 @@ struct EditItemView: View {
             Section {
                 TextField("Item Name", text: $item.itemName)
                 TextField("Quantity", text: $item.quantity)
+                    .keyboardType(.numberPad)
                 TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                    .keyboardType(.numberPad)
+            }
+            Section("Quantity Warning Threshold"){
+                
+                TextField("Min Level", text:$item.quantityWarn)
+                    .keyboardType(.numberPad)
             }
             Section{
                 HStack{

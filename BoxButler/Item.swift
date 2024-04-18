@@ -15,13 +15,15 @@ class Item: Hashable, Equatable {
     var price: Decimal = 0.0
     var itemDetails: String
     var location: [LocationTag] = []
+    var quantityWarn: String
     @Attribute(.externalStorage) var photo: Data?
     
-    init(itemName: String, quantity: String, price: Decimal = 0.0, itemDetails: String, location: [LocationTag]) {
+    init(itemName: String, quantity: String, price: Decimal = 0.0, itemDetails: String, location: [LocationTag], quantityWarn: String) {
         self.itemName = itemName
         self.quantity = quantity
         self.price = price
         self.itemDetails = itemDetails
         self.location = location
+        self.quantityWarn = quantityWarn
     }
 }
