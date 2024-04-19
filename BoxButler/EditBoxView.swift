@@ -14,6 +14,7 @@ struct EditBoxView: View {
     @Query var items: [Item]
     @State private var selectedItem: PhotosPickerItem?
     @Binding var isShowingAddLocationSheet: Bool
+    @Binding var shouldShowPlus: Bool
 
     
     var body: some View {
@@ -62,6 +63,9 @@ struct EditBoxView: View {
         }
         .navigationTitle("Edit Box")
         .onChange(of: selectedItem, loadPhoto)
+        .onAppear{
+            shouldShowPlus = true
+        }
     }
     
     func deleteItems(at offsets: IndexSet) {

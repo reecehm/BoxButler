@@ -138,7 +138,6 @@ struct AddItemLocationSheet: View {
     func addTag() -> LocationTag {
         let tag = LocationTag(name: tagText)
         modelContext.insert(tag)
-        
         return tag
     }
 }

@@ -13,6 +13,7 @@ struct EditItemView: View {
     @Query var boxes: [Box]
     @State private var selectedItem: PhotosPickerItem?
     @Binding var isShowingAddLocationSheet: Bool
+    @Binding var shouldShowPlus: Bool
 
     var body: some View {
     
@@ -72,6 +73,9 @@ struct EditItemView: View {
             }
         }
             .onChange(of: selectedItem, loadPhoto)
+            .onAppear{
+                shouldShowPlus = true
+            }
         }
     
     

@@ -20,26 +20,20 @@ class ScanState: ObservableObject{
 struct BoxButlerApp: App {
     @ObservedObject var scanState = ScanState(isScanning: false)
     @StateObject private var vm = AppViewModel()
+    let modelContainer: ModelContainer
+    
+    init() {
+            do {
+                modelContainer = try ModelContainer(for: Item.self, Box.self, LocationTag.self)
+            } catch {
+                fatalError("Could not initialize ModelContainer")
+            }
+        }
     
     var body: some Scene {
         WindowGroup {
-            if scanState.isScanning == true {
-                ScannerView()
-                    .environmentObject(scanState)
-                    .environmentObject(vm)
-                    .task {
-                        await vm.requestDataScannerAccessStatus()
-                    }
-            }
-            else{
-                ContentView()
-                   .environmentObject(scanState)
-                   .environmentObject(vm)
-                   .task {
-                       await vm.requestDataScannerAccessStatus()
-                   }
-            }
+            ContentView()
         }
-        .modelContainer(for: [Item.self, Box.self, LocationTag.self])
+        .modelContainer(modelContainer)
     }
 }
