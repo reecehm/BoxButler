@@ -95,6 +95,7 @@ struct ScannerView: View {
                         case .barcode(let barcode):
                             Text(barcode.payloadStringValue ?? "Unknown barcode")
                             
+                            
                         case .text(let text):
                             Text(text.transcript)
                             

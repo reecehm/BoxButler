@@ -32,16 +32,83 @@ struct ItemsListView: View {
         
             List {
                 ForEach(items) { item in
-                    NavigationLink(value: item){
-                        Image(systemName: "pencil")
-                        Text(item.itemName)
+                    VStack{
+                        NavigationLink(value: item){
+                            HStack{
+                                Image(systemName: "pencil")
+                                Text(item.itemName)
+                                    .font(.system(size: 20, weight: .bold))
+                                Spacer()
+                                if let imageData = item.photo, let uiImage = UIImage(data: imageData) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 50, height: 50)
+                                        .cornerRadius(5)
+                                        .overlay(
+                                            Rectangle().stroke(Color.primary, lineWidth: 3)
+                                                .cornerRadius(5)
+                                        )
+                                        .shadow(radius: 3)
+                                }
+                            }
+                            }
+                            ForEach(item.location) { tag in
+                            HStack{
+                                Text(tag.name)
+                                    .foregroundColor(Color.white)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .multilineTextAlignment(.center)
+                                    .padding()
+                                    .frame(height: 27)
+                                    .background(Rectangle().fill(Color(.red))
+                                        .opacity(0.8))
+                                    .cornerRadius(10)
+                                Spacer()
+                                }
+                            }
+                        
                     }
+                    
                 }
                 .onDelete(perform: deleteItems)
                 ForEach(boxes) { box in
-                    NavigationLink(value: box){
-                        Image(systemName: "shippingbox.fill")
-                        Text(box.boxName)
+                    VStack{
+                        NavigationLink(value: box){
+                            HStack{
+                                Image(systemName: "shippingbox.fill")
+                                Text(box.boxName)
+                                    .font(.system(size: 20, weight: .bold))
+                                Spacer()
+                                if let imageData = box.photo, let uiImage = UIImage(data: imageData) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 50, height: 50)
+                                        .cornerRadius(5)
+                                        .overlay(
+                                            Rectangle().stroke(Color.primary, lineWidth: 3)
+                                                .cornerRadius(5)
+                                        )
+                                        .shadow(radius: 3)
+                                }
+                            }
+                            
+                        }
+                        ForEach(box.location) { tag in
+                        HStack{
+                            Text(tag.name)
+                                .foregroundColor(Color.white)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .frame(height: 27)
+                                .background(Rectangle().fill(Color(.red))
+                                    .opacity(0.8))
+                                .cornerRadius(10)
+                            Spacer()
+                            }
+                        }
                     }
                 }
                 .onDelete(perform: deleteBoxes)

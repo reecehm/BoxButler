@@ -33,7 +33,13 @@ struct BoxButlerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(scanState)
+                .environmentObject(vm)
+                .task {
+                    await vm.requestDataScannerAccessStatus()
+                }
         }
         .modelContainer(modelContainer)
+        
     }
 }

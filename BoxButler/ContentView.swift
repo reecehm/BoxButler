@@ -87,8 +87,9 @@ struct ContentView: View {
                        SettingsView()
                    }
                }
-               .animation(nil)
-               
+               .transaction { transaction in
+                   transaction.animation = nil
+               }
                if selectedTab != .second {
                    tabBarView
                }
@@ -99,10 +100,10 @@ struct ContentView: View {
         VStack(spacing: 0) {
             Divider()
             
-            HStack(spacing: 13) {
+            HStack(spacing: 9) {
                 tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
                 tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
-                tabBarItem(.third, title: "Search", icon: "magnifyingglass.circle", selectedIcon: "magnifyingglass.circle.fill")
+                tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
                 tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
                 tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
             }
@@ -119,7 +120,7 @@ struct ContentView: View {
             VStack(spacing: 3) {
                 VStack {
                     Image(systemName: (selectedTab == tab ? selectedIcon : icon))
-                        .font(.system(size: 24))
+                        .font(selectedTab == tab ? .system(size: 24).weight(.heavy) : .system(size: 24))
                         .foregroundColor(selectedTab == tab ? .primary : .black)
                 }
                 .frame(width: 55, height: 28)
@@ -176,12 +177,10 @@ struct ContentView: View {
         }
         func addItem() -> Item {
             let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
-            modelContext.insert(item)
             return item
         }
         func addBox() -> Box {
             let box = Box(boxName: "", boxQuantity: "", price: 0.0, boxDetails: "", location: [])
-            modelContext.insert(box)
             return box
         }
     }
@@ -194,6 +193,7 @@ struct ContentView: View {
         @State private var selectedItem: PhotosPickerItem?
         @State private var isShowingAddLocationSheet = false
         @Binding var isShowingSelectionSheet: Bool
+        @State var isShowingEmptyAlert: Bool = false
         
         
         var body: some View {
@@ -270,10 +270,13 @@ struct ContentView: View {
                     ToolbarItemGroup(placement: .topBarTrailing){
                         Button("Save") {
                             if item.itemName == ""{
-                                item.itemName = "Unnamed Item"
+                                isShowingEmptyAlert = true
                             }
-                            dismiss()
-                            isShowingSelectionSheet = false
+                            else{
+                                dismiss()
+                                modelContext.insert(item)
+                                isShowingSelectionSheet = false
+                            }
                         }
                     }
                 }
@@ -281,6 +284,9 @@ struct ContentView: View {
             .sheet(isPresented: $isShowingAddLocationSheet, content: {
                 AddItemLocationSheet(item: item)
             })
+            .alert(isPresented: $isShowingEmptyAlert) {
+                Alert(title: Text("Cannot Leave Item Title Blank"), dismissButton: .default(Text("Ok")))
+            }
         }
         func loadPhoto () {
             Task { @MainActor in
@@ -297,6 +303,7 @@ struct ContentView: View {
         @State private var selectedItem: PhotosPickerItem?
         @State private var isShowingAddLocationSheet = false
         @Binding var isShowingSelectionSheet: Bool
+        @State var isShowingEmptyAlert: Bool = false
 
         
         var body: some View{
@@ -359,10 +366,13 @@ struct ContentView: View {
                     ToolbarItemGroup(placement: .topBarTrailing){
                         Button("Save") {
                             if box.boxName == ""{
-                                box.boxName = "Unnamed Box"
+                                isShowingEmptyAlert = true
                             }
-                            dismiss()
-                            isShowingSelectionSheet = false
+                            else{
+                                modelContext.insert(box)
+                                dismiss()
+                                isShowingSelectionSheet = false
+                            }
                         }
                     }
                 }
@@ -370,6 +380,9 @@ struct ContentView: View {
             .sheet(isPresented: $isShowingAddLocationSheet, content: {
                 AddBoxLocationSheet(box: box)
             })
+            .alert(isPresented: $isShowingEmptyAlert) {
+                Alert(title: Text("Cannot Leave Box Title Blank"), dismissButton: .default(Text("Ok")))
+            }
         }
         
         func loadPhoto () {
