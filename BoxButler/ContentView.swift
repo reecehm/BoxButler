@@ -7,8 +7,11 @@
 import SwiftData
 import SwiftUI
 import PhotosUI
+import VisionKit
 
-
+enum Tab: Int {
+       case first, second, third, fourth, fifth
+   }
 
 struct ContentView: View {
     @Environment(\.modelContext) var modelContext
@@ -17,14 +20,13 @@ struct ContentView: View {
     @Query var items: [Item]
     @State var currentItem: Item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
     @EnvironmentObject var scanState: ScanState
-    enum Tab: Int {
-           case first, second, third, fourth, fifth
-       }
+    
     @State private var selectedTab = Tab.first
     @State private var isShowingAddLocationSheet = false
     @State private var isShowingSelectionSheet = false
     @State var shouldShowPlus: Bool = false
     @State private var navPath = NavigationPath()
+    
     
     var body: some View {
            VStack(spacing: 0) {
@@ -81,8 +83,8 @@ struct ContentView: View {
                        SearchView()
                    }
                    else if selectedTab == .fourth {
-                       ScannerView()
-                   }
+                       ScannerView(selectedTab: $selectedTab)
+                    }
                    else if selectedTab == .fifth {
                        SettingsView()
                    }
@@ -90,30 +92,32 @@ struct ContentView: View {
                .transaction { transaction in
                    transaction.animation = nil
                }
-               if selectedTab != .second {
+               if selectedTab != .second && selectedTab != .fourth {
                    tabBarView
                }
            }
        }
        
     var tabBarView: some View {
-        VStack(spacing: 0) {
-            Divider()
-            
-            HStack(spacing: 9) {
-                tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
-                tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
-                tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
-                tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
-                tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
+        ZStack{
+            VStack(spacing: 0) {
+                Divider()
+                
+                HStack(spacing: 9) {
+                    tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
+                    tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
+                    tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
+                    tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
+                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
+                }
+                .padding(.top, 20)
             }
-            .padding(.top, 20)
+            .frame(height: 50)
+            .background(Color("TabColor").edgesIgnoringSafeArea(.all))
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
-        .frame(height: 50)
-        .background(Color.white.edgesIgnoringSafeArea(.all))
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-
     }
+
        
     func tabBarItem(_ tab: Tab, title: String, icon: String, selectedIcon: String) -> some View {
         ZStack(alignment: .topTrailing) {
@@ -121,13 +125,13 @@ struct ContentView: View {
                 VStack {
                     Image(systemName: (selectedTab == tab ? selectedIcon : icon))
                         .font(selectedTab == tab ? .system(size: 24).weight(.heavy) : .system(size: 24))
-                        .foregroundColor(selectedTab == tab ? .primary : .black)
+                        .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
                 }
                 .frame(width: 55, height: 28)
                 
                 Text(title)
                     .font(.system(size: 11))
-                    .foregroundColor(selectedTab == tab ? .primary : .black)
+                    .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
             }
         }
         .frame(width: 65, height: 42)
@@ -393,6 +397,7 @@ struct ContentView: View {
         }
         
     }
+    
 }
 
 #Preview {

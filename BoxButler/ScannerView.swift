@@ -8,9 +8,17 @@
 import SwiftUI
 import VisionKit
 
+
 struct ScannerView: View {
     @EnvironmentObject var scanState: ScanState
     @EnvironmentObject var vm: AppViewModel
+    
+    @Binding var selectedTab: Tab
+    
+    @State private var capturedBarcode: String?
+    @State private var didCapture: Bool = false
+  
+
     
     private let textContentTypes: [(title: String, textContentType: DataScannerViewController.TextContentType?)] = [
         ("All", .none),
@@ -40,26 +48,26 @@ struct ScannerView: View {
             recognizedItems: $vm.recognizedItems,
             recognizedDataType: vm.recognizedDataType,
             recognizesMultipleItems: vm.recognizesMultipleItems)
-        .background { Color.gray.opacity(0.3) }
-        .ignoresSafeArea()
-        .id(vm.dataScannerViewId)
-        .sheet(isPresented: .constant(true)) {
-            bottomContainerView
-                .background(.ultraThinMaterial)
-                .presentationDetents([.medium, .fraction(0.25)])
-                .presentationDragIndicator(.visible)
-                .interactiveDismissDisabled()
-                .onAppear {
-                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                          let controller = windowScene.windows.first?.rootViewController?.presentedViewController else {
-                        return
+            .background { Color.gray.opacity(0.3) }
+            .ignoresSafeArea()
+            .id(vm.dataScannerViewId)
+            .sheet(isPresented: .constant(true)) {
+                bottomContainerView
+                    .background(.ultraThinMaterial)
+                    .presentationDetents([.height(275)])
+                    .presentationDragIndicator(.visible)
+                    .interactiveDismissDisabled()
+                    .onAppear {
+                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                              let controller = windowScene.windows.first?.rootViewController?.presentedViewController else {
+                            return
+                        }
+                        controller.view.backgroundColor = .clear
                     }
-                    controller.view.backgroundColor = .clear
-                }
-        }
-        .onChange(of: vm.scanType) {  vm.recognizedItems = [] }
-        .onChange(of: vm.textContentType) {  vm.recognizedItems = [] }
-        .onChange(of: vm.recognizesMultipleItems) {  vm.recognizedItems = []}
+            }
+            .onChange(of: vm.scanType) {  vm.recognizedItems = [] }
+            .onChange(of: vm.textContentType) {  vm.recognizedItems = [] }
+            .onChange(of: vm.recognizesMultipleItems) {  vm.recognizedItems = []}
     }
     
     private var headerView: some View {
@@ -94,7 +102,15 @@ struct ScannerView: View {
                         switch item {
                         case .barcode(let barcode):
                             Text(barcode.payloadStringValue ?? "Unknown barcode")
-                            
+                                .onReceive(vm.$recognizedItems) { recognizedItems in
+                                // Check if a barcode is recognized
+                                    if case let .barcode(barcode) = recognizedItems.first {
+                                        // Update the capturedBarcode variable
+                                        capturedBarcode = barcode.payloadStringValue
+                                        didCapture = true
+                                    }
+                                    
+                                }
                             
                         case .text(let text):
                             Text(text.transcript)
@@ -103,9 +119,69 @@ struct ScannerView: View {
                             Text("Unknown")
                         }
                     }
+            
+                    if didCapture {
+                        if let barcodeValue = capturedBarcode {
+                            // Display the "add item" button if a barcode is recognized
+                            
+                            
+                            Button(action: {
+                                
+                            }) {
+                                Text("Add Item for \(barcodeValue)")
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .cornerRadius(8)
+                            }
+                        }
+                    }
                 }
                 .padding()
             }
+            tabBarView
+        }
+    }
+
+    var tabBarView: some View {
+        ZStack{
+            VStack(spacing: 0) {
+                Divider()
+                
+                HStack(spacing: 9) {
+                    tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
+                    tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
+                    tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
+                    tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
+                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
+                }
+                .padding(.top, 20)
+            }
+            .frame(height: 50)
+            .background(Color("TabColor").edgesIgnoringSafeArea(.all))
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+        }
+    }
+    
+    func tabBarItem(_ tab: Tab, title: String, icon: String, selectedIcon: String) -> some View {
+        ZStack(alignment: .topTrailing) {
+            VStack(spacing: 3) {
+                VStack {
+                    Image(systemName: (selectedTab == tab ? selectedIcon : icon))
+                        .font(selectedTab == tab ? .system(size: 24).weight(.heavy) : .system(size: 24))
+                        .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
+                }
+                .frame(width: 55, height: 28)
+                
+                Text(title)
+                    .font(.system(size: 11))
+                    .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
+            }
+        }
+        .frame(width: 65, height: 42)
+        .onTapGesture {
+            selectedTab = tab
         }
     }
 }
+
