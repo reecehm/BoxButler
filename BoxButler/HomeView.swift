@@ -11,6 +11,8 @@ struct HomeView: View {
     @Environment(\.modelContext) var modelContext
     @Query var items: [Item]
     @Query var boxes: [Box]
+    @Query var changes: [Change]
+    
 
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
     
@@ -18,6 +20,7 @@ struct HomeView: View {
     
     @State var totalQuantity:Int = 0
     @State var totalInventoryValue: Decimal = 0.0
+    @State  var filteredItems: [Item] = []
 
     
     var body: some View {
@@ -92,17 +95,47 @@ struct HomeView: View {
             .background(Rectangle().fill(.thinMaterial))
             .cornerRadius(10)
             HStack {
-                HStack {
-                    Text("Notifications")
-                        .font(.headline)
-                        .padding(.leading, 10)
-                        .padding(.trailing, 10)
-                }            
-                .frame(height: 35)
-                .background(Rectangle().fill(.thinMaterial))
-                .cornerRadius(10)
-                .padding(.leading, 10)
-
+                VStack {
+                    HStack {
+                        Text("Notifications")
+                            .font(.headline)
+                            .padding(.leading, 10)
+                            .padding(.trailing, 10)
+                            .frame(height: 35)
+                            .background(Rectangle().fill(.thinMaterial))
+                            .cornerRadius(10)
+                            .padding(.leading, 10)
+                        Spacer()
+                    }
+                    List {
+                            ForEach(filteredItems, id: \.id) { item in
+                                    Text(item.itemName + " has low quantity.")
+                            }
+                            }
+                    .onAppear {
+                        filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
+                    }
+                    HStack {
+                        Text("Recent Changes")
+                            .font(.headline)
+                            .padding(.leading, 10)
+                            .padding(.trailing, 10)
+                            .frame(height: 35)
+                            .background(Rectangle().fill(.thinMaterial))
+                            .cornerRadius(10)
+                            .padding(.leading, 10)
+                        
+                        Spacer()
+                    }
+                    List {
+                        ForEach(changes) {change in
+                            Text(change.changeMessage)
+                        }
+                    }
+                    .onAppear {
+                        filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
+                    }
+                }
                 Spacer()
             }
             
@@ -121,8 +154,11 @@ struct HomeView: View {
                     print("Invalid quantity value for item: \(item)")
                 }
             }
+            
+            
         }
     }
+        
         
         
 }

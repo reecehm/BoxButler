@@ -37,7 +37,7 @@ struct ContentView: View {
                    else if selectedTab == .second {
                        NavigationStack(path: $navPath){
                                ItemsListView()
-                               .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
+                               .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus, originalItem: item)
                                        .sheet(isPresented: $isShowingAddLocationSheet, content: {
                                            AddItemLocationSheet(item: item)
                                        })}

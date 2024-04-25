@@ -9,15 +9,20 @@ import SwiftData
 import SwiftUI
 
 struct EditItemView: View {
+    @Environment(\.modelContext) var modelContext
     @Bindable var item: Item
     @Query var boxes: [Box]
+    
     @State private var selectedItem: PhotosPickerItem?
     @Binding var isShowingAddLocationSheet: Bool
     @Binding var shouldShowPlus: Bool
+    let originalItem: Item
+    @Query var changes: [Change]
+    
 
     var body: some View {
-    
-            Form {
+        
+        Form {
             Section{
                 if let imageData = item.photo, let uiImage = UIImage(data: imageData) {
                     Image(uiImage: uiImage)
@@ -72,11 +77,14 @@ struct EditItemView: View {
                 TextField("Details about this Item", text: $item.itemDetails, axis: .vertical)
             }
         }
-            .onChange(of: selectedItem, loadPhoto)
-            .onAppear{
-                shouldShowPlus = true
-            }
+        .onChange(of: selectedItem, loadPhoto)
+        .onAppear{
+            print("on appear")
+            shouldShowPlus = true
         }
+    }
+        
+       
     
     
     

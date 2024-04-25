@@ -24,7 +24,7 @@ struct BoxButlerApp: App {
     
     init() {
             do {
-                modelContainer = try ModelContainer(for: Item.self, Box.self, LocationTag.self)
+                modelContainer = try ModelContainer(for: Item.self, Box.self, LocationTag.self, Change.self)
             } catch {
                 fatalError("Could not initialize ModelContainer")
             }

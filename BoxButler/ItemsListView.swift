@@ -26,6 +26,9 @@ struct ItemsListView: View {
     @Environment(\.modelContext) var modelContext
     @Query var items: [Item]
     @Query var boxes: [Box]
+    @Query var changes: [Change]
+    @State var originalItem: Item = Item(itemName: "", quantity: "", itemDetails: "", location: [], quantityWarn: "")
+
 
     
     var body: some View {
@@ -112,7 +115,46 @@ struct ItemsListView: View {
                     }
                 }
                 .onDelete(perform: deleteBoxes)
+               
             }
+            .onAppear{
+                print("on appear")
+                
+                if item.itemName != originalItem.itemName {
+                       let change = Change(changeType: "Item Name", changeMessage: "Item name changed from \(originalItem.itemName) to \(item.itemName)")
+                    modelContext.insert(change)
+                    print(change.changeMessage)
+                }
+                if item.quantity != originalItem.quantity {
+                    let change = Change(changeType: "Quantity", changeMessage: "Quantity for \(item.itemName) changed from \(originalItem.quantity) to \(item.quantity)")
+                    modelContext.insert(change)
+                }
+                if item.price != originalItem.price {
+                    let change = Change(changeType: "Price", changeMessage: "Price for \(item.price) changed from \(originalItem.price) to \(item.price)")
+                    modelContext.insert(change)
+                }
+                if item.itemDetails != originalItem.itemDetails {
+                    let change = Change(changeType: "Item Details", changeMessage: "Item details for \(item.itemName) changed from \(originalItem.itemDetails) to \(item.itemDetails)")
+                    modelContext.insert(change)
+                }
+                if item.location != originalItem.location {
+                       let change = Change(changeType: "Location", changeMessage: "Item location for \(item.location) changed from \(originalItem.location) to \(item.location)")
+                    modelContext.insert(change)
+                }
+                if item.quantityWarn != originalItem.quantityWarn {
+                       let change = Change(changeType: "Quantity Warn", changeMessage: "Quantity warning threshold for \(item.itemName) changed from \(originalItem.quantityWarn) to \(item.quantityWarn)")
+                    modelContext.insert(change)
+                }
+                if item.photo != originalItem.photo {
+                       let change = Change(changeType: "Photo", changeMessage: "Photo for \(item.itemName) was changed.")
+                       modelContext.insert(change)
+                }
+            }
+            .onDisappear{
+                print("on disappear")
+                originalItem =
+                }
+            
         
             .overlay{
                 if items.isEmpty && boxes.isEmpty{
