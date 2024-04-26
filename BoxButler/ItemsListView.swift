@@ -28,11 +28,8 @@ struct ItemsListView: View {
     @Query var boxes: [Box]
     @Query var changes: [Change]
     @State var originalItem: Item = Item(itemName: "", quantity: "", itemDetails: "", location: [], quantityWarn: "")
-
-
     
     var body: some View {
-        
             List {
                 ForEach(items) { item in
                     VStack{
@@ -56,6 +53,7 @@ struct ItemsListView: View {
                                 }
                             }
                             }
+                            .onTapGesture {originalItem = item}
                             ForEach(item.location) { tag in
                             HStack{
                                 Text(tag.name)
@@ -117,43 +115,39 @@ struct ItemsListView: View {
                 .onDelete(perform: deleteBoxes)
                
             }
-            .onAppear{
+           .onAppear{
                 print("on appear")
                 
-                if item.itemName != originalItem.itemName {
-                       let change = Change(changeType: "Item Name", changeMessage: "Item name changed from \(originalItem.itemName) to \(item.itemName)")
+                if newItemVar.newItem.itemName != originalItem.itemName {
+                       let change = Change(changeType: "Item Name", changeMessage: "Item name changed from \(originalItem.itemName) to \(newItemVar.newItem.itemName)")
                     modelContext.insert(change)
                     print(change.changeMessage)
                 }
-                if item.quantity != originalItem.quantity {
-                    let change = Change(changeType: "Quantity", changeMessage: "Quantity for \(item.itemName) changed from \(originalItem.quantity) to \(item.quantity)")
+                if newItemVar.newItem.quantity != originalItem.quantity {
+                    let change = Change(changeType: "Quantity", changeMessage: "Quantity for \(newItemVar.newItem.itemName) changed from \(originalItem.quantity) to \(newItemVar.newItem.quantity)")
                     modelContext.insert(change)
                 }
-                if item.price != originalItem.price {
-                    let change = Change(changeType: "Price", changeMessage: "Price for \(item.price) changed from \(originalItem.price) to \(item.price)")
+                if newItemVar.newItem.price != originalItem.price {
+                    let change = Change(changeType: "Price", changeMessage: "Price for \(newItemVar.newItem.price) changed from \(originalItem.price) to \(newItemVar.newItem.price)")
                     modelContext.insert(change)
                 }
-                if item.itemDetails != originalItem.itemDetails {
-                    let change = Change(changeType: "Item Details", changeMessage: "Item details for \(item.itemName) changed from \(originalItem.itemDetails) to \(item.itemDetails)")
+                if newItemVar.newItem.itemDetails != originalItem.itemDetails {
+                    let change = Change(changeType: "Item Details", changeMessage: "Item details for \(newItemVar.newItem.itemName) changed from \(originalItem.itemDetails) to \(newItemVar.newItem.itemDetails)")
                     modelContext.insert(change)
                 }
-                if item.location != originalItem.location {
-                       let change = Change(changeType: "Location", changeMessage: "Item location for \(item.location) changed from \(originalItem.location) to \(item.location)")
+                if newItemVar.newItem.location != originalItem.location {
+                       let change = Change(changeType: "Location", changeMessage: "Item location for \(newItemVar.newItem.location) changed from \(originalItem.location) to \(newItemVar.newItem.location)")
                     modelContext.insert(change)
                 }
-                if item.quantityWarn != originalItem.quantityWarn {
-                       let change = Change(changeType: "Quantity Warn", changeMessage: "Quantity warning threshold for \(item.itemName) changed from \(originalItem.quantityWarn) to \(item.quantityWarn)")
+                if newItemVar.newItem.quantityWarn != originalItem.quantityWarn {
+                       let change = Change(changeType: "Quantity Warn", changeMessage: "Quantity warning threshold for \(newItemVar.newItem.itemName) changed from \(originalItem.quantityWarn) to \(newItemVar.newItem.quantityWarn)")
                     modelContext.insert(change)
                 }
-                if item.photo != originalItem.photo {
-                       let change = Change(changeType: "Photo", changeMessage: "Photo for \(item.itemName) was changed.")
+                if newItemVar.newItem.photo != originalItem.photo {
+                       let change = Change(changeType: "Photo", changeMessage: "Photo for \(newItemVar.newItem.itemName) was changed.")
                        modelContext.insert(change)
                 }
             }
-            .onDisappear{
-                print("on disappear")
-                originalItem =
-                }
             
         
             .overlay{

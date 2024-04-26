@@ -16,7 +16,6 @@ struct EditItemView: View {
     @State private var selectedItem: PhotosPickerItem?
     @Binding var isShowingAddLocationSheet: Bool
     @Binding var shouldShowPlus: Bool
-    let originalItem: Item
     @Query var changes: [Change]
     
 
@@ -82,9 +81,12 @@ struct EditItemView: View {
             print("on appear")
             shouldShowPlus = true
         }
+        .onDisappear{
+            newItemVar.newItem = item
+        }
     }
         
-       
+    
     
     
     
@@ -96,6 +98,10 @@ struct EditItemView: View {
         }
     }
     
+}
+
+struct newItemVar {
+    static var newItem: Item = Item(itemName: "", quantity: "", itemDetails: "", location: [], quantityWarn: "")
 }
 
 
