@@ -148,7 +148,28 @@ struct HomeView: View {
                                         Spacer()
                                     }
                                 }
-                            } else {
+                            }
+                            else if change.changeType == "Location"{
+                                VStack {
+                                    HStack {
+                                        Text(change.changeType)
+                                            .foregroundColor(.blue)
+                                        Text("changed from")
+                                        Text(change.originalVar)
+                                            .foregroundColor(.red)
+                                        Spacer()
+                                    }
+                                    HStack {
+                                        Text("to")
+                                            .multilineTextAlignment(.leading)
+                                        Text(change.newVar)
+                                            .foregroundColor(.green)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            else {
                                 Text("\(change.changeType) for \(change.originalVar) was changed.")
                             }
                         }

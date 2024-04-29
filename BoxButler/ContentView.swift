@@ -181,6 +181,7 @@ struct ContentView: View {
         }
         func addItem() -> Item {
             let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
+            print("item added")
             return item
         }
         func addBox() -> Box {

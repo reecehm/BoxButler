@@ -51,7 +51,7 @@ struct EditItemView: View {
                     Button{
                         isShowingAddLocationSheet = true
                     } label: {
-                        Text("Edit Location Tags")
+                        Text("Edit Tags")
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -82,7 +82,9 @@ struct EditItemView: View {
                 itemStruct.originalItem.itemName = item.itemName
                 itemStruct.originalItem.quantity = item.quantity
                 itemStruct.originalItem.itemDetails = item.itemDetails
-                itemStruct.originalItem.location = item.location
+                for location in item.location {
+                itemStruct.locationTagName.append(location.name)
+                }
                 itemStruct.originalItem.quantityWarn = item.quantityWarn
         }
         .onDisappear{
@@ -102,10 +104,14 @@ struct EditItemView: View {
                 let change = Change(changeType: "Item Details", originalVar: itemStruct.originalItem.itemDetails, newVar: item.itemDetails)
                     modelContext.insert(change)
                  }
-//            if item.location != itemStruct.originalItem.location && !itemStruct.originalItem.location.isEmpty{
-//                let change = Change(changeType: "Location", originalVar: itemStruct.originalItem.location[0].name, newVar: item.location[0].name)
-//                    modelContext.insert(change)
-//                 }
+            for location in item.location {
+                for name in itemStruct.locationTagName {
+                    if location.name != name && !itemStruct.locationTagName.isEmpty {
+                        let change = Change(changeType: "Location", originalVar: name, newVar: location.name)
+                           modelContext.insert(change)
+                        }
+                }
+            }
             if item.quantityWarn != itemStruct.originalItem.quantityWarn && !itemStruct.originalItem.quantityWarn.isEmpty{
                 let change = Change(changeType: "Quantity Warn", originalVar: itemStruct.originalItem.quantityWarn, newVar: item.quantityWarn)
                     modelContext.insert(change)

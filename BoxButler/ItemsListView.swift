@@ -153,6 +153,7 @@ struct ItemsListView: View {
 
 struct itemStruct {
     static var originalItem: Item = Item(itemName: "", quantity: "", itemDetails: "", location: [], quantityWarn: "")
+    static var locationTagName: [String] = []
 }
 
 
