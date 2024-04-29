@@ -134,12 +134,19 @@ struct HomeView: View {
                                     HStack {
                                         Text(change.changeType)
                                             .foregroundColor(.blue)
-                                        Text("changed from")
-                                        Text(change.originalVar)
-                                            .foregroundColor(.red)
+                                        Text("in item")
+                                        Text(change.nameOfChangedItem)
+                                        
                                         Spacer()
                                     }
                                     HStack {
+                                        Text("changed from")
+                                        Text(change.originalVar)
+                                            .foregroundColor(.red)
+                                        
+                                        Spacer()
+                                    }
+                                    HStack{
                                         Text("to")
                                             .multilineTextAlignment(.leading)
                                         Text(change.newVar)

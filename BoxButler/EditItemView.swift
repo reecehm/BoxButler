@@ -81,6 +81,7 @@ struct EditItemView: View {
             shouldShowPlus = true
                 itemStruct.originalItem.itemName = item.itemName
                 itemStruct.originalItem.quantity = item.quantity
+                itemStruct.originalItem.price = item.price  
                 itemStruct.originalItem.itemDetails = item.itemDetails
                 for location in item.location {
                 itemStruct.locationTagName.append(location.name)
@@ -89,19 +90,21 @@ struct EditItemView: View {
         }
         .onDisappear{
             if item.itemName != itemStruct.originalItem.itemName && !itemStruct.originalItem.itemName.isEmpty {
-                let change = Change(changeType: "Item Name", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName)
+                let change = Change(changeType: "Item Name", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName, nameOfChangedItem: itemStruct.originalItem.itemName)
                     modelContext.insert(change)
                  }
             if item.quantity != itemStruct.originalItem.quantity && !itemStruct.originalItem.quantity.isEmpty{
-                let change = Change(changeType: "Quantity", originalVar: itemStruct.originalItem.quantity, newVar: item.quantity)
+                let change = Change(changeType: "Quantity", originalVar: itemStruct.originalItem.quantity, newVar: item.quantity, nameOfChangedItem: itemStruct.originalItem.itemName)
                     modelContext.insert(change)
                  }
-            if item.price != itemStruct.originalItem.price && !itemStruct.originalItem.price.isNaN{
-            let change = Change(changeType: "Price", originalVar: String(format: "%.2f", itemStruct.originalItem.price as CVarArg), newVar: String(format: "%.2f", item.price as CVarArg))
-                    modelContext.insert(change)
-                 }
+            if item.price != itemStruct.originalItem.price {
+                let originalPriceString = String(describing: itemStruct.originalItem.price)
+                let newPriceString = String(describing: item.price)
+                let change = Change(changeType: "Price", originalVar: originalPriceString, newVar: newPriceString, nameOfChangedItem: itemStruct.originalItem.itemName)
+                modelContext.insert(change)
+            }
             if item.itemDetails != itemStruct.originalItem.itemDetails && !itemStruct.originalItem.itemDetails.isEmpty {
-                let change = Change(changeType: "Item Details", originalVar: itemStruct.originalItem.itemDetails, newVar: item.itemDetails)
+                let change = Change(changeType: "Item Details", originalVar: itemStruct.originalItem.itemDetails, newVar: item.itemDetails, nameOfChangedItem: itemStruct.originalItem.itemName)
                     modelContext.insert(change)
                  }
             for location in item.location {
@@ -113,11 +116,11 @@ struct EditItemView: View {
                 }
             }
             if item.quantityWarn != itemStruct.originalItem.quantityWarn && !itemStruct.originalItem.quantityWarn.isEmpty{
-                let change = Change(changeType: "Quantity Warn", originalVar: itemStruct.originalItem.quantityWarn, newVar: item.quantityWarn)
+                let change = Change(changeType: "Quantity Warn", originalVar: itemStruct.originalItem.quantityWarn, newVar: item.quantityWarn, nameOfChangedItem: itemStruct.originalItem.itemName)
                     modelContext.insert(change)
                  }
             if item.photo != itemStruct.originalItem.photo {
-                let change = Change(changeType: "Photo", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName)
+                let change = Change(changeType: "Photo", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName, nameOfChangedItem: itemStruct.originalItem.itemName)
                     modelContext.insert(change)
                  }
              
