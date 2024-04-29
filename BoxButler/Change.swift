@@ -10,10 +10,14 @@ import SwiftData
 @Model
 class Change {
     var changeType: String
-    var changeMessage: String
+    var originalVar: String
+    var newVar: String
     
-    init(changeType: String, changeMessage: String) {
+    init(changeType: String, originalVar: String, newVar: String) {
         self.changeType = changeType
-        self.changeMessage = changeMessage
+        self.originalVar = originalVar
+        self.newVar = newVar
+        
+        
     }
 }

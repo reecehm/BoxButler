@@ -128,20 +128,40 @@ struct HomeView: View {
                         Spacer()
                     }
                     List {
-                        ForEach(changes) {change in
-                            Text(change.changeMessage)
+                        ForEach(changes.reversed()) { change in
+                            if change.changeType != "Photo" {
+                                VStack {
+                                    HStack {
+                                        Text(change.changeType)
+                                            .foregroundColor(.blue)
+                                        Text("changed from")
+                                        Text(change.originalVar)
+                                            .foregroundColor(.red)
+                                        Spacer()
+                                    }
+                                    HStack {
+                                        Text("to")
+                                            .multilineTextAlignment(.leading)
+                                        Text(change.newVar)
+                                            .foregroundColor(.green)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                    }
+                                }
+                            } else {
+                                Text("\(change.changeType) for \(change.originalVar) was changed.")
+                            }
                         }
                     }
+                    
                     .onAppear {
                         filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
                     }
                 }
-                Spacer()
             }
             
-            Spacer()
         }
-        .padding(.bottom, 80.0)
+        .padding(.bottom, 40.0)
         .onAppear {
             totalQuantity = 0
             totalInventoryValue = 0
