@@ -129,7 +129,34 @@ struct HomeView: View {
                     }
                     List {
                         ForEach(changes.reversed()) { change in
-                            if change.changeType != "Photo" || change.changeType != "New item created" {
+                            if change.changeType == "Removed Tag"{
+                                VStack {
+                                    HStack {
+                                        Text(change.changeType)
+                                            .foregroundColor(.blue)
+                                        Text(change.originalVar)
+                                        Text("from item")
+                                        Text(change.nameOfChangedItem)
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            if change.changeType == "Added Tag" {
+                                VStack{
+                                    HStack{
+                                        Text(change.changeType)
+                                            .foregroundColor(.blue)
+                                        Text(change.newVar)
+                                        Text("to item")
+                                        Text(change.nameOfChangedItem)
+                                        Spacer()
+                                    }
+                            }
+                            }
+                            if change.changeType == "Photo"{
+                                Text("\(change.changeType) for \(change.originalVar) was changed.")
+                            }
+                            else {
                                 VStack {
                                     HStack {
                                         Text(change.changeType)
@@ -155,41 +182,6 @@ struct HomeView: View {
                                         Spacer()
                                     }
                                 }
-                            }
-                            if change.changeType == "Location"{
-                                VStack {
-                                    HStack {
-                                        Text(change.changeType)
-                                            .foregroundColor(.blue)
-                                        Text("changed from")
-                                        Text(change.originalVar)
-                                            .foregroundColor(.red)
-                                        Spacer()
-                                    }
-                                    HStack {
-                                        Text("to")
-                                            .multilineTextAlignment(.leading)
-                                        Text(change.newVar)
-                                            .foregroundColor(.green)
-                                            .multilineTextAlignment(.leading)
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            if change.changeType == "New item created"{
-                                VStack {
-                                    HStack {
-                                        Text(change.changeType)
-                                            .foregroundColor(.blue)
-                                        Text("named")
-                                        Text(change.newVar)
-                                            .foregroundColor(.green)
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            else {
-                                Text("\(change.changeType) for \(change.originalVar) was changed.")
                             }
                         }
                     }
