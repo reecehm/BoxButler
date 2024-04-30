@@ -110,7 +110,7 @@ struct EditItemView: View {
             for location in item.location {
                 for name in itemStruct.locationTagName {
                     if location.name != name && !itemStruct.locationTagName.isEmpty {
-                        let change = Change(changeType: "Location", originalVar: name, newVar: location.name)
+                        let change = Change(changeType: "Location", originalVar: name, newVar: location.name, nameOfChangedItem: itemStruct.originalItem.itemName)
                            modelContext.insert(change)
                         }
                 }

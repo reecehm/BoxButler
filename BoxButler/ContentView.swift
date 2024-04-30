@@ -181,7 +181,6 @@ struct ContentView: View {
         }
         func addItem() -> Item {
             let item = Item(itemName: "", quantity: "", price: 0.0, itemDetails: "", location: [], quantityWarn: "")
-            print("item added")
             return item
         }
         func addBox() -> Box {
@@ -281,6 +280,8 @@ struct ContentView: View {
                                 dismiss()
                                 modelContext.insert(item)
                                 isShowingSelectionSheet = false
+                                let change = Change(changeType: "New item created", originalVar: "nonexistant item", newVar: item.itemName, nameOfChangedItem: item.itemName)
+                                modelContext.insert(change)
                             }
                         }
                     }

@@ -129,7 +129,7 @@ struct HomeView: View {
                     }
                     List {
                         ForEach(changes.reversed()) { change in
-                            if change.changeType != "Photo" {
+                            if change.changeType != "Photo" || change.changeType != "New item created" {
                                 VStack {
                                     HStack {
                                         Text(change.changeType)
@@ -156,7 +156,7 @@ struct HomeView: View {
                                     }
                                 }
                             }
-                            else if change.changeType == "Location"{
+                            if change.changeType == "Location"{
                                 VStack {
                                     HStack {
                                         Text(change.changeType)
@@ -172,6 +172,18 @@ struct HomeView: View {
                                         Text(change.newVar)
                                             .foregroundColor(.green)
                                             .multilineTextAlignment(.leading)
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            if change.changeType == "New item created"{
+                                VStack {
+                                    HStack {
+                                        Text(change.changeType)
+                                            .foregroundColor(.blue)
+                                        Text("named")
+                                        Text(change.newVar)
+                                            .foregroundColor(.green)
                                         Spacer()
                                     }
                                 }
