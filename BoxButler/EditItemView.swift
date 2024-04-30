@@ -100,19 +100,43 @@ struct EditItemView: View {
             if item.price != itemStruct.originalItem.price {
                 let originalPriceString = String(describing: itemStruct.originalItem.price)
                 let newPriceString = String(describing: item.price)
-                let change = Change(changeType: "Price", originalVar: originalPriceString, newVar: newPriceString, nameOfChangedItem: itemStruct.originalItem.itemName)
+                let change = Change(changeType: "Price", originalVar: originalPriceString, newVar: newPriceString, nameOfChangedItem: item.itemName)
                 modelContext.insert(change)
             }
             if item.itemDetails != itemStruct.originalItem.itemDetails && !itemStruct.originalItem.itemDetails.isEmpty {
-                let change = Change(changeType: "Item Details", originalVar: itemStruct.originalItem.itemDetails, newVar: item.itemDetails, nameOfChangedItem: itemStruct.originalItem.itemName)
+                let change = Change(changeType: "Item Details", originalVar: itemStruct.originalItem.itemDetails, newVar: item.itemDetails, nameOfChangedItem: item.itemName)
                     modelContext.insert(change)
                  }
-            for location in item.location {
+            if !item.location.isEmpty && itemStruct.locationTagName.isEmpty {
+                for location in item.location {
+                    let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: item.itemName)
+                            modelContext.insert(change)
+                }
+            }
+            if item.location.isEmpty && !itemStruct.locationTagName.isEmpty {
                 for name in itemStruct.locationTagName {
-                    if location.name != name && !itemStruct.locationTagName.isEmpty {
-                        let change = Change(changeType: "Location", originalVar: name, newVar: location.name)
-                           modelContext.insert(change)
+                    let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: item.itemName)
+                        modelContext.insert(change)
+                }
+            }
+            if item.location.count < itemStruct.locationTagName.count {
+                for location in item.location {
+                    for name in itemStruct.locationTagName {
+                        if !location.name.contains(name) {
+                            let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: item.itemName)
+                                modelContext.insert(change)
                         }
+                    }
+                }
+            }
+            if item.location.count > itemStruct.locationTagName.count {
+                for location in item.location {
+                    for _ in itemStruct.locationTagName {
+                        if !itemStruct.locationTagName.contains(location.name) {
+                            let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: item.itemName)
+                                modelContext.insert(change)
+                        }
+                    }
                 }
             }
             if item.quantityWarn != itemStruct.originalItem.quantityWarn && !itemStruct.originalItem.quantityWarn.isEmpty{
@@ -120,7 +144,7 @@ struct EditItemView: View {
                     modelContext.insert(change)
                  }
             if item.photo != itemStruct.originalItem.photo {
-                let change = Change(changeType: "Photo", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName, nameOfChangedItem: itemStruct.originalItem.itemName)
+                let change = Change(changeType: "Photo", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName, nameOfChangedItem: item.itemName)
                     modelContext.insert(change)
                  }
              
