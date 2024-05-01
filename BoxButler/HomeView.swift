@@ -108,12 +108,27 @@ struct HomeView: View {
                         Spacer()
                     }
                     List {
-                            ForEach(filteredItems, id: \.id) { item in
-                                    Text(item.itemName + " has low quantity.")
+                        ForEach(filteredItems, id: \.id) { item in
+                            if item.quantityWarn != "" && item.quantity <= item.quantityWarn {
+                                Text(item.itemName + " has low quantity.")
                             }
+                        }
+                    }
+                    .overlay(Group{
+                        if filteredItems.isEmpty {
+                            HStack{
+                                Text("No notifications")
+                                Image(systemName: "bell.and.waves.left.and.right.fill")
                             }
+                            
+                        }})
                     .onAppear {
-                        filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
+                        filteredItems = items.filter { item in
+                            if item.quantityWarn != "" {
+                                return item.quantity <= item.quantityWarn
+                            }
+                            return false // If quantityWarn is not set, exclude the item
+                        }
                     }
                     HStack {
                         Text("Recent Changes")
@@ -135,33 +150,44 @@ struct HomeView: View {
                                         Text(change.changeType)
                                             .foregroundColor(.blue)
                                         Text(change.originalVar)
+                                        
+                                        Spacer()
+                                    }
+                                    HStack{
                                         Text("from item")
                                         Text(change.nameOfChangedItem)
                                         Spacer()
                                     }
                                 }
                             }
-                            if change.changeType == "Added Tag" {
+                            else if change.changeType == "Added Tag" {
                                 VStack{
                                     HStack{
                                         Text(change.changeType)
                                             .foregroundColor(.blue)
                                         Text(change.newVar)
+                                        
+                                        Spacer()
+                                    }
+                                    HStack{
                                         Text("to item")
                                         Text(change.nameOfChangedItem)
                                         Spacer()
                                     }
                             }
                             }
-                            if change.changeType == "Photo"{
+                            else if change.changeType == "Photo"{
                                 Text("\(change.changeType) for \(change.originalVar) was changed.")
+                            }
+                            else if change.changeType == "New item created" {
+                                Text("\(change.changeType) named \(change.newVar).")
                             }
                             else {
                                 VStack {
                                     HStack {
                                         Text(change.changeType)
                                             .foregroundColor(.blue)
-                                        Text("in item")
+                                        Text("for item")
                                         Text(change.nameOfChangedItem)
                                         
                                         Spacer()
@@ -185,6 +211,17 @@ struct HomeView: View {
                             }
                         }
                     }
+                    .overlay(Group{
+                        if changes.isEmpty {
+                            VStack{
+                                Text("Start adding items")
+                                HStack{
+                                    Text("to see their recent changes")
+                                    Image(systemName: "pencil.and.scribble")
+                                }
+                            }
+                        }
+                    })
                     
                     .onAppear {
                         filteredItems = items.filter {$0.quantity <= $0.quantityWarn }

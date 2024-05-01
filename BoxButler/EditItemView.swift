@@ -79,24 +79,24 @@ struct EditItemView: View {
         .onChange(of: selectedItem, loadPhoto)
         .onAppear{
             shouldShowPlus = true
-                itemStruct.originalItem.itemName = item.itemName
-                itemStruct.originalItem.quantity = item.quantity
-                itemStruct.originalItem.price = item.price  
-                itemStruct.originalItem.itemDetails = item.itemDetails
-                for location in item.location {
+            itemStruct.originalItem.itemName = item.itemName
+            itemStruct.originalItem.quantity = item.quantity
+            itemStruct.originalItem.price = item.price
+            itemStruct.originalItem.itemDetails = item.itemDetails
+            for location in item.location {
                 itemStruct.locationTagName.append(location.name)
-                }
-                itemStruct.originalItem.quantityWarn = item.quantityWarn
+            }
+            itemStruct.originalItem.quantityWarn = item.quantityWarn
         }
         .onDisappear{
             if item.itemName != itemStruct.originalItem.itemName && !itemStruct.originalItem.itemName.isEmpty {
                 let change = Change(changeType: "Item Name", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName, nameOfChangedItem: itemStruct.originalItem.itemName)
-                    modelContext.insert(change)
-                 }
+                modelContext.insert(change)
+            }
             if item.quantity != itemStruct.originalItem.quantity && !itemStruct.originalItem.quantity.isEmpty{
                 let change = Change(changeType: "Quantity", originalVar: itemStruct.originalItem.quantity, newVar: item.quantity, nameOfChangedItem: itemStruct.originalItem.itemName)
-                    modelContext.insert(change)
-                 }
+                modelContext.insert(change)
+            }
             if item.price != itemStruct.originalItem.price {
                 let originalPriceString = String(describing: itemStruct.originalItem.price)
                 let newPriceString = String(describing: item.price)
@@ -105,44 +105,32 @@ struct EditItemView: View {
             }
             if item.itemDetails != itemStruct.originalItem.itemDetails && !itemStruct.originalItem.itemDetails.isEmpty {
                 let change = Change(changeType: "Item Details", originalVar: itemStruct.originalItem.itemDetails, newVar: item.itemDetails, nameOfChangedItem: item.itemName)
-                    modelContext.insert(change)
-                 }
-            if !item.location.isEmpty && itemStruct.locationTagName.isEmpty {
-                for location in item.location {
-                    let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: item.itemName)
-                            modelContext.insert(change)
-                }
-            }
-            if item.location.isEmpty && !itemStruct.locationTagName.isEmpty {
-                for name in itemStruct.locationTagName {
-                    let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: item.itemName)
-                        modelContext.insert(change)
-                }
+                modelContext.insert(change)
             }
             if item.location.count < itemStruct.locationTagName.count {
+                var locationNames: [String] = []
                 for location in item.location {
-                    for name in itemStruct.locationTagName {
-                        if !location.name.contains(name) {
+                    locationNames.append(location.name)
+                }
+                for name in itemStruct.locationTagName {
+                    if !locationNames.contains(name) {
                             let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: item.itemName)
-                                modelContext.insert(change)
+                            modelContext.insert(change)
                         }
                     }
                 }
-            }
             if item.location.count > itemStruct.locationTagName.count {
                 for location in item.location {
-                    for _ in itemStruct.locationTagName {
-                        if !itemStruct.locationTagName.contains(location.name) {
-                            let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: item.itemName)
-                                modelContext.insert(change)
-                        }
+                    if !itemStruct.locationTagName.contains(location.name) {
+                        let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: item.itemName)
+                        modelContext.insert(change)
                     }
                 }
             }
-            if item.quantityWarn != itemStruct.originalItem.quantityWarn && !itemStruct.originalItem.quantityWarn.isEmpty{
-                let change = Change(changeType: "Quantity Warn", originalVar: itemStruct.originalItem.quantityWarn, newVar: item.quantityWarn, nameOfChangedItem: itemStruct.originalItem.itemName)
-                    modelContext.insert(change)
-                 }
+        if item.quantityWarn != itemStruct.originalItem.quantityWarn && !itemStruct.originalItem.quantityWarn.isEmpty{
+            let change = Change(changeType: "Quantity Warn", originalVar: itemStruct.originalItem.quantityWarn, newVar: item.quantityWarn, nameOfChangedItem: itemStruct.originalItem.itemName)
+            modelContext.insert(change)
+            }
             if item.photo != itemStruct.originalItem.photo {
                 let change = Change(changeType: "Photo", originalVar: itemStruct.originalItem.itemName, newVar: item.itemName, nameOfChangedItem: item.itemName)
                     modelContext.insert(change)

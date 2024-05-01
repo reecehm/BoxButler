@@ -10,6 +10,7 @@ import VisionKit
 
 
 struct ScannerView: View {
+    @Environment(\.modelContext) var modelContext
     @EnvironmentObject var scanState: ScanState
     @EnvironmentObject var vm: AppViewModel
     
@@ -17,6 +18,7 @@ struct ScannerView: View {
     
     @State private var capturedBarcode: String?
     @State private var didCapture: Bool = false
+    @State private var showPopup = false
   
 
     
@@ -29,17 +31,36 @@ struct ScannerView: View {
     ]
     
     var body: some View {
-        switch vm.dataScannerAccessStatus {
-        case .scannerAvailable:
-            mainView
-        case .cameraNotAvailable:
-            Text("Your device doesn't have a camera")
-        case .scannerNotAvailable:
-            Text("Your device doesn't have support for scanning barcode with this app")
-        case .cameraAccessNotGranted:
-            Text("Please provide access to the camera in settings")
-        case .notDetermined:
-            Text("Requesting camera access")
+        ZStack{
+            switch vm.dataScannerAccessStatus {
+            case .scannerAvailable:
+                mainView
+            case .cameraNotAvailable:
+                Text("Your device doesn't have a camera")
+            case .scannerNotAvailable:
+                Text("Your device doesn't have support for scanning barcode with this app")
+            case .cameraAccessNotGranted:
+                Text("Please provide access to the camera in settings")
+            case .notDetermined:
+                Text("Requesting camera access")
+            }
+            if showPopup {
+                Color.black.opacity(0.7)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.green)
+                        .background(Rectangle().fill(.thinMaterial))
+                    Text("Item added")
+                        .foregroundColor(.green)
+                        .padding()
+                        .background(Rectangle().fill(.thinMaterial))
+                }
+                .background(Color.white)
+                .cornerRadius(16)
+            }
         }
     }
     
@@ -92,7 +113,7 @@ struct ScannerView: View {
             Text(vm.headerText).padding(.top)
         }.padding(.horizontal)
     }
-    
+
     private var bottomContainerView: some View {
         VStack {
             headerView
@@ -102,45 +123,114 @@ struct ScannerView: View {
                         switch item {
                         case .barcode(let barcode):
                             Text(barcode.payloadStringValue ?? "Unknown barcode")
-                                .onReceive(vm.$recognizedItems) { recognizedItems in
-                                // Check if a barcode is recognized
-                                    if case let .barcode(barcode) = recognizedItems.first {
-                                        // Update the capturedBarcode variable
-                                        capturedBarcode = barcode.payloadStringValue
-                                        didCapture = true
-                                    }
-                                    
-                                }
-                            
                         case .text(let text):
                             Text(text.transcript)
-                            
                         @unknown default:
                             Text("Unknown")
-                        }
-                    }
-            
-                    if didCapture {
-                        if let barcodeValue = capturedBarcode {
-                            // Display the "add item" button if a barcode is recognized
-                            
-                            
-                            Button(action: {
-                                
-                            }) {
-                                Text("Add Item for \(barcodeValue)")
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(8)
-                            }
                         }
                     }
                 }
                 .padding()
             }
+            .onReceive(vm.$recognizedItems) { recognizedItems in
+                // Check if a barcode is recognized
+                if let barcode = recognizedItems.compactMap({ item -> String? in
+                    if case let .barcode(barcode) = item {
+                        return barcode.payloadStringValue
+                    }
+                    return nil
+                }).first {
+                    // Update the capturedBarcode variable
+                    capturedBarcode = barcode
+                    didCapture = true
+                } else {
+                    // No barcode recognized, reset variables
+                    capturedBarcode = nil
+                    didCapture = false
+                }
+            }
+            if didCapture {
+                if let barcodeValue = capturedBarcode {
+                    // Display the "Add Item" button if a barcode is recognized
+                    Button(action: {
+                        // Call the API to add the item
+                        addItemForBarcode(barcodeValue)
+                        // Reset capturedBarcode and didCapture after adding item
+                        capturedBarcode = nil
+                        didCapture = false
+                        // Show the popup
+                        showPopup = true
+                        // Hide the popup after 3 seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            showPopup = false
+                        }
+                    }) {
+                        Text("Add Item for \(barcodeValue)")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                    }
+                }
+            }
             tabBarView
         }
+    }
+
+
+
+    // Function to add item for the recognized barcode
+    func addItemForBarcode(_ barcode: String) {
+        // Define the URL
+        let urlString = "https://api.upcdatabase.org/product/\(barcode)"// Note: query parameters should be properly encoded
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            // Handle error
+            return
+        }
+        
+        // Create the URL request
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        // Set the Authorization header
+        let apiKey = "1539DB77B48B9E15315867D60D061CA7"
+        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        
+        // Create the URLSession
+        let session = URLSession.shared
+        
+        // Create the data task
+        let task = session.dataTask(with: request) { data, response, error in
+            // Check for errors
+                if let error = error {
+                    print("Error: \(error)")
+                    // Handle error
+                    return
+                }
+
+                // Check if there is data
+                guard let data = data else {
+                    print("No data received")
+                    // Handle empty response
+                    return
+                }
+
+                // Parse the API response into Item instances
+                if let items = parseItems(from: data) {
+                    // Handle parsed items here
+                    // Update your view model or UI with the received items
+                    for item in items {
+                        modelContext.insert(item)
+                    }
+                } else {
+                    print("Failed to parse API response into items")
+                    // Handle parsing failure
+                }
+        }
+        
+        // Resume the task
+        task.resume()
     }
 
     var tabBarView: some View {
@@ -183,5 +273,40 @@ struct ScannerView: View {
             selectedTab = tab
         }
     }
+    
+    func parseItems(from data: Data) -> [Item]? {
+        do {
+            let jsonDecoder = JSONDecoder()
+            let response = try jsonDecoder.decode(APIResponse.self, from: data)
+            return [Item(itemName: response.title,
+                         quantity: "",
+                         itemDetails: response.description,
+                         location: [],
+                         quantityWarn: "")]
+        } catch {
+            print("Error decoding JSON: \(error)")
+            return nil
+        }
+    }
+
+    // Define structures to match the API response
+    struct APIResponse: Decodable {
+        let success: String
+        let barcode: String
+        let title: String
+        let alias: String
+        let description: String
+        let brand: String
+        let manufacturer: String
+        let mpn: String
+        let msrp: String
+        let ASIN: String
+        let category: String
+        let images: [String]
+    }
+
 }
+
+
+
 
