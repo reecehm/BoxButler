@@ -39,7 +39,7 @@ struct EditItemView: View {
                 TextField("Quantity", text: $item.quantity)
                     .keyboardType(.numberPad)
                 TextField("Price", value: $item.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .keyboardType(.numberPad)
+                    .keyboardType(.decimalPad)
             }
             Section("Quantity Warning Threshold"){
                 
@@ -76,6 +76,7 @@ struct EditItemView: View {
                 TextField("Details about this Item", text: $item.itemDetails, axis: .vertical)
             }
         }
+        .navigationTitle("Edit Item")
         .onChange(of: selectedItem, loadPhoto)
         .onAppear{
             shouldShowPlus = true

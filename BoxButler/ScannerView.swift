@@ -8,7 +8,6 @@
 import SwiftUI
 import VisionKit
 
-
 struct ScannerView: View {
     @Environment(\.modelContext) var modelContext
     @EnvironmentObject var scanState: ScanState
@@ -19,8 +18,7 @@ struct ScannerView: View {
     @State private var capturedBarcode: String?
     @State private var didCapture: Bool = false
     @State private var showPopup = false
-  
-
+    @State private var apiError: String? = nil
     
     private let textContentTypes: [(title: String, textContentType: DataScannerViewController.TextContentType?)] = [
         ("All", .none),
@@ -48,18 +46,20 @@ struct ScannerView: View {
                 Color.black.opacity(0.7)
                     .edgesIgnoringSafeArea(.all)
                 
-                VStack {
+                HStack {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 60))
                         .foregroundColor(.green)
-                        .background(Rectangle().fill(.thinMaterial))
+                        .padding()
                     Text("Item added")
                         .foregroundColor(.green)
                         .padding()
-                        .background(Rectangle().fill(.thinMaterial))
                 }
-                .background(Color.white)
-                .cornerRadius(16)
+                .background(Rectangle().fill(.thinMaterial))
+            }
+            if let error = apiError {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
             }
         }
     }
@@ -69,26 +69,26 @@ struct ScannerView: View {
             recognizedItems: $vm.recognizedItems,
             recognizedDataType: vm.recognizedDataType,
             recognizesMultipleItems: vm.recognizesMultipleItems)
-            .background { Color.gray.opacity(0.3) }
-            .ignoresSafeArea()
-            .id(vm.dataScannerViewId)
-            .sheet(isPresented: .constant(true)) {
-                bottomContainerView
-                    .background(.ultraThinMaterial)
-                    .presentationDetents([.height(275)])
-                    .presentationDragIndicator(.visible)
-                    .interactiveDismissDisabled()
-                    .onAppear {
-                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                              let controller = windowScene.windows.first?.rootViewController?.presentedViewController else {
-                            return
-                        }
-                        controller.view.backgroundColor = .clear
+        .background { Color.gray.opacity(0.3) }
+        .ignoresSafeArea()
+        .id(vm.dataScannerViewId)
+        .sheet(isPresented: .constant(true)) {
+            bottomContainerView
+                .background(.ultraThinMaterial)
+                .presentationDetents([.height(275)])
+                .presentationDragIndicator(.visible)
+                .interactiveDismissDisabled()
+                .onAppear {
+                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                          let controller = windowScene.windows.first?.rootViewController?.presentedViewController else {
+                        return
                     }
-            }
-            .onChange(of: vm.scanType) {  vm.recognizedItems = [] }
-            .onChange(of: vm.textContentType) {  vm.recognizedItems = [] }
-            .onChange(of: vm.recognizesMultipleItems) {  vm.recognizedItems = []}
+                    controller.view.backgroundColor = .clear
+                }
+        }
+        .onChange(of: vm.scanType) {  vm.recognizedItems = [] }
+        .onChange(of: vm.textContentType) {  vm.recognizedItems = [] }
+        .onChange(of: vm.recognizesMultipleItems) {  vm.recognizedItems = []}
     }
     
     private var headerView: some View {
@@ -113,7 +113,7 @@ struct ScannerView: View {
             Text(vm.headerText).padding(.top)
         }.padding(.horizontal)
     }
-
+    
     private var bottomContainerView: some View {
         VStack {
             headerView
@@ -143,10 +143,6 @@ struct ScannerView: View {
                     // Update the capturedBarcode variable
                     capturedBarcode = barcode
                     didCapture = true
-                } else {
-                    // No barcode recognized, reset variables
-                    capturedBarcode = nil
-                    didCapture = false
                 }
             }
             if didCapture {
@@ -155,15 +151,6 @@ struct ScannerView: View {
                     Button(action: {
                         // Call the API to add the item
                         addItemForBarcode(barcodeValue)
-                        // Reset capturedBarcode and didCapture after adding item
-                        capturedBarcode = nil
-                        didCapture = false
-                        // Show the popup
-                        showPopup = true
-                        // Hide the popup after 3 seconds
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            showPopup = false
-                        }
                     }) {
                         Text("Add Item for \(barcodeValue)")
                             .foregroundColor(.white)
@@ -176,16 +163,13 @@ struct ScannerView: View {
             tabBarView
         }
     }
-
-
-
+    
     // Function to add item for the recognized barcode
     func addItemForBarcode(_ barcode: String) {
         // Define the URL
-        let urlString = "https://api.upcdatabase.org/product/\(barcode)"// Note: query parameters should be properly encoded
+        let urlString = "https://api.upcdatabase.org/product/\(barcode)"
         guard let url = URL(string: urlString) else {
-            print("Invalid URL")
-            // Handle error
+            apiError = "Invalid URL"
             return
         }
         
@@ -194,7 +178,7 @@ struct ScannerView: View {
         request.httpMethod = "GET"
         
         // Set the Authorization header
-        let apiKey = "1539DB77B48B9E15315867D60D061CA7"
+        let apiKey = "BB8A048DEC392F7B886431FD07521604"
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         
         // Create the URLSession
@@ -203,36 +187,39 @@ struct ScannerView: View {
         // Create the data task
         let task = session.dataTask(with: request) { data, response, error in
             // Check for errors
-                if let error = error {
-                    print("Error: \(error)")
-                    // Handle error
-                    return
+            if let error = error {
+                apiError = "Error: \(error.localizedDescription)"
+                return
+            }
+            
+            // Check if there is data
+            guard let data = data else {
+                apiError = "No data received"
+                return
+            }
+            
+            // Parse the API response into Item instances
+            if let items = parseItems(from: data) {
+                // Handle parsed items here
+                // Update your view model or UI with the received items
+                for item in items {
+                    modelContext.insert(item)
                 }
-
-                // Check if there is data
-                guard let data = data else {
-                    print("No data received")
-                    // Handle empty response
-                    return
+                // Show the popup
+                showPopup = true
+                // Hide the popup after 3 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    showPopup = false
                 }
-
-                // Parse the API response into Item instances
-                if let items = parseItems(from: data) {
-                    // Handle parsed items here
-                    // Update your view model or UI with the received items
-                    for item in items {
-                        modelContext.insert(item)
-                    }
-                } else {
-                    print("Failed to parse API response into items")
-                    // Handle parsing failure
-                }
+            } else {
+                apiError = "Failed to parse API response into items"
+            }
         }
         
         // Resume the task
         task.resume()
     }
-
+    
     var tabBarView: some View {
         ZStack{
             VStack(spacing: 0) {
@@ -278,35 +265,57 @@ struct ScannerView: View {
         do {
             let jsonDecoder = JSONDecoder()
             let response = try jsonDecoder.decode(APIResponse.self, from: data)
-            return [Item(itemName: response.title,
-                         quantity: "",
-                         itemDetails: response.description,
-                         location: [],
-                         quantityWarn: "")]
+            
+            // Map APIResponse fields to Item properties
+            let newItem = Item(
+                itemName: response.title,
+                quantity: response.metadata.quantity,
+                price: Decimal(string: response.msrp) ?? 0.0,
+                itemDetails: response.description,
+                location: [], // You might want to adjust this based on the API response
+                quantityWarn: "" // You might want to adjust this based on the API response
+            )
+            
+            // Return an array with the created item
+            return [newItem]
         } catch {
-            print("Error decoding JSON: \(error)")
+            apiError = "Error decoding JSON: \(error.localizedDescription)"
             return nil
         }
     }
-
+    
     // Define structures to match the API response
     struct APIResponse: Decodable {
-        let success: String
+        let success: Bool
         let barcode: String
         let title: String
-        let alias: String
+        let alias: String?
         let description: String
         let brand: String
-        let manufacturer: String
-        let mpn: String
+        let manufacturer: String?
+        let mpn: String?
         let msrp: String
-        let ASIN: String
+        let ASIN: String?
         let category: String
-        let images: [String]
+        let metadata: Metadata
+        let stores: [Store]?
+        let images: [String]?
+        let reviews: Reviews?
     }
-
+    
+    struct Metadata: Decodable {
+        let quantity: String
+        // Add other fields here as needed
+    }
+    
+    struct Store: Decodable {
+        let store: String
+        let price: String
+        let link: String
+    }
+    
+    struct Reviews: Decodable {
+        let thumbsup: Int
+        let thumbsdown: Int
+    }
 }
-
-
-
-

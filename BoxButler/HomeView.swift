@@ -12,17 +12,12 @@ struct HomeView: View {
     @Query var items: [Item]
     @Query var boxes: [Box]
     @Query var changes: [Change]
-    
-
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
-    
-    let greyColor = Color(red: 0.9137, green: 0.9137, blue: 0.9215)
-    
+    let blueColor = UIColor(red: 65/255, green: 105/255, blue: 225/255, alpha: 1.0)
     @State var totalQuantity:Int = 0
     @State var totalInventoryValue: Decimal = 0.0
-    @State  var filteredItems: [Item] = []
+    @State var filteredItems: [Item] = []
 
-    
     var body: some View {
         VStack{
             ZStack {
@@ -94,71 +89,46 @@ struct HomeView: View {
             .frame(height: 88)
             .background(Rectangle().fill(.thinMaterial))
             .cornerRadius(10)
-            HStack {
-                VStack {
-                    HStack {
-                        Text("Notifications")
-                            .font(.headline)
-                            .padding(.leading, 10)
-                            .padding(.trailing, 10)
-                            .frame(height: 35)
-                            .background(Rectangle().fill(.thinMaterial))
-                            .cornerRadius(10)
-                            .padding(.leading, 10)
-                        Spacer()
-                    }
-                    List {
-                        ForEach(filteredItems, id: \.id) { item in
-                            if item.quantityWarn != "" && item.quantity <= item.quantityWarn {
+            Divider()
+                .frame(height: 0.8)
+                .overlay(.gray)
+                .opacity(0.5)
+            List {
+                Section("Notifications") {
+                    ForEach(filteredItems, id: \.id) { item in
+                        if item.quantityWarn != "" && item.quantity <= item.quantityWarn {
                                 Text(item.itemName + " has low quantity.")
-                            }
+                                .padding(.top, 8)
+                                .padding(.bottom, 8)
                         }
                     }
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 10)
+                          .fill(Color(.white))
+                          .padding(.vertical, 4)
+                    )
+                    .listRowSeparator(.hidden)
                     .overlay(Group{
                         if filteredItems.isEmpty {
                             HStack{
                                 Text("No notifications")
                                 Image(systemName: "bell.and.waves.left.and.right.fill")
                             }
-                            
-                        }})
-                    .onAppear {
-                        filteredItems = items.filter { item in
-                            if item.quantityWarn != "" {
-                                return item.quantity <= item.quantityWarn
-                            }
-                            return false // If quantityWarn is not set, exclude the item
+                    }})
+                }
+                .headerProminence(.increased)
+                .onAppear {
+                    filteredItems = items.filter { item in
+                        if item.quantityWarn != "" {
+                            return item.quantity <= item.quantityWarn
                         }
+                        return false // If quantityWarn is not set, exclude the item
                     }
-                    HStack {
-                        Text("Recent Changes")
-                            .font(.headline)
-                            .padding(.leading, 10)
-                            .padding(.trailing, 10)
-                            .frame(height: 35)
-                            .background(Rectangle().fill(.thinMaterial))
-                            .cornerRadius(10)
-                            .padding(.leading, 10)
-                        
-                        Spacer()
-                    }
-                    List {
+                }
+                Section("Recent Changes"){
                         ForEach(changes.reversed()) { change in
                             if change.changeType == "Removed Tag"{
-                                VStack {
-                                    HStack {
-                                        Text(change.changeType)
-                                            .foregroundColor(.blue)
-                                        Text(change.originalVar)
-                                        
-                                        Spacer()
-                                    }
-                                    HStack{
-                                        Text("from item")
-                                        Text(change.nameOfChangedItem)
-                                        Spacer()
-                                    }
-                                }
+                                Text(stringFormatter(change: change))
                             }
                             else if change.changeType == "Added Tag" {
                                 VStack{
@@ -170,11 +140,11 @@ struct HomeView: View {
                                         Spacer()
                                     }
                                     HStack{
-                                        Text("to item")
+                                        Text("to")
                                         Text(change.nameOfChangedItem)
                                         Spacer()
                                     }
-                            }
+                                }
                             }
                             else if change.changeType == "Photo"{
                                 Text("\(change.changeType) for \(change.originalVar) was changed.")
@@ -182,12 +152,15 @@ struct HomeView: View {
                             else if change.changeType == "New item created" {
                                 Text("\(change.changeType) named \(change.newVar).")
                             }
+                            else if change.changeType == "New box created" {
+                                Text("\(change.changeType) named \(change.newVar).")
+                            }
                             else {
                                 VStack {
                                     HStack {
                                         Text(change.changeType)
                                             .foregroundColor(.blue)
-                                        Text("for item")
+                                        Text("for")
                                         Text(change.nameOfChangedItem)
                                         
                                         Spacer()
@@ -210,48 +183,60 @@ struct HomeView: View {
                                 }
                             }
                         }
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 10)
+                              .fill(Color(.white))
+                              .padding(.vertical, 4)
+                        )
+                        .listRowSeparator(.hidden)
+                        .onAppear {
+                            filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
+                        }
                     }
+                .headerProminence(.increased)
                     .overlay(Group{
                         if changes.isEmpty {
-                            VStack{
-                                Text("Start adding items")
-                                HStack{
-                                    Text("to see their recent changes")
-                                    Image(systemName: "pencil.and.scribble")
+                            HStack{
+                                VStack{
+                                    Text("Start adding items to see their")
+                                    Text("recent changes here!")
+                                    Image(systemName: "list.bullet.rectangle")
+                                        .padding(.top, 2)
+                                        .bold()
                                 }
                             }
-                        }
-                    })
-                    
-                    .onAppear {
-                        filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
+                        }})
+                
+            }
+            .padding(.top, -8)
+            .onAppear {
+                totalQuantity = 0
+                totalInventoryValue = 0
+                
+                for item in items {
+                    if let quantity = Int(item.quantity) {
+                        totalQuantity += quantity
+                        totalInventoryValue += Decimal(quantity) * item.price
+                    } else {
+                        print("Invalid quantity value for item: \(item)")
                     }
                 }
             }
-            
-        }
-        .padding(.bottom, 40.0)
-        .onAppear {
-            totalQuantity = 0
-            totalInventoryValue = 0
-            
-            for item in items {
-                if let quantity = Int(item.quantity) {
-                    totalQuantity += quantity
-                    totalInventoryValue += Decimal(quantity) * item.price
-                } else {
-                    print("Invalid quantity value for item: \(item)")
-                }
-            }
-            
-            
         }
     }
-        
-        
-        
+    
+    func stringFormatter (change: Change) -> AttributedString{
+                let string = (change.changeType + " " + change.originalVar + " from " + change.nameOfChangedItem)
+                let attributedString = NSMutableAttributedString(string: string)
+                attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
+                attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+1, length: change.originalVar.count))
+                attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: change.changeType.count + change.originalVar.count+2, length: 4))
+                attributedString.addAttribute(.foregroundColor, value: UIColor.green, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
+                
+                return AttributedString(attributedString)
+        }
+    
 }
-
 #Preview {
     HomeView()
 }

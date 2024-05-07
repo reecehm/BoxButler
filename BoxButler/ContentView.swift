@@ -80,7 +80,7 @@ struct ContentView: View {
                        }
                    }
                    else if selectedTab == .third {
-                       SearchView()
+                       SearchView(selectedTab: $selectedTab)
                    }
                    else if selectedTab == .fourth {
                        ScannerView(selectedTab: $selectedTab)
@@ -92,7 +92,7 @@ struct ContentView: View {
                .transaction { transaction in
                    transaction.animation = nil
                }
-               if selectedTab != .second && selectedTab != .fourth {
+               if selectedTab != .second && selectedTab != .fourth && selectedTab != .third {
                    tabBarView
                }
            }
@@ -102,6 +102,9 @@ struct ContentView: View {
         ZStack{
             VStack(spacing: 0) {
                 Divider()
+                    .frame(height: 0.8)
+                    .overlay(.gray)
+                    .opacity(0.5)
                 
                 HStack(spacing: 9) {
                     tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
@@ -112,7 +115,7 @@ struct ContentView: View {
                 }
                 .padding(.top, 20)
             }
-            .frame(height: 50)
+            .frame(height: 61)
             .background(Color("TabColor").edgesIgnoringSafeArea(.all))
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
@@ -377,6 +380,8 @@ struct ContentView: View {
                             else{
                                 modelContext.insert(box)
                                 dismiss()
+                                let change = Change(changeType: "New box created", originalVar: "nonexistant item", newVar: box.boxName, nameOfChangedItem: box.boxName)
+                                modelContext.insert(change)
                                 isShowingSelectionSheet = false
                             }
                         }

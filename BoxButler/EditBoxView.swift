@@ -12,9 +12,11 @@ struct EditBoxView: View {
     @Environment(\.modelContext) var modelContext
     @Bindable var box: Box
     @Query var items: [Item]
+    
     @State private var selectedItem: PhotosPickerItem?
     @Binding var isShowingAddLocationSheet: Bool
     @Binding var shouldShowPlus: Bool
+    @Query var changes: [Change]
 
     
     var body: some View {
@@ -34,6 +36,7 @@ struct EditBoxView: View {
                 TextField("Box Name", text: $box.boxName)
                 TextField("Units Per Box", text: $box.boxQuantity)
                 TextField("Price", value: $box.price, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                    .keyboardType(.decimalPad)
             }
             Section{
                 HStack{
@@ -65,6 +68,54 @@ struct EditBoxView: View {
         .onChange(of: selectedItem, loadPhoto)
         .onAppear{
             shouldShowPlus = true
+            boxStruct.originalBox.boxName = box.boxName
+            boxStruct.originalBox.boxQuantity = box.boxQuantity
+            boxStruct.originalBox.price = box.price
+            boxStruct.originalBox.boxDetails = box.boxDetails
+            for location in box.location {
+                boxStruct.locationTagName.append(location.name)
+            }
+        }
+        .onDisappear{
+            if box.boxName != boxStruct.originalBox.boxName && !boxStruct.originalBox.boxName.isEmpty {
+                let change = Change(changeType: "Box Name", originalVar: boxStruct.originalBox.boxName, newVar: box.boxName, nameOfChangedItem: boxStruct.originalBox.boxName)
+                modelContext.insert(change)
+            }
+            if box.boxQuantity != boxStruct.originalBox.boxQuantity && !boxStruct.originalBox.boxQuantity.isEmpty {
+                let change = Change(changeType: "Quantity", originalVar: boxStruct.originalBox.boxQuantity, newVar: box.boxQuantity, nameOfChangedItem: box.boxName)
+                modelContext.insert(change)
+            }
+            if box.price != boxStruct.originalBox.price {
+                let originalPriceString = String(describing: boxStruct.originalBox.price)
+                let newPriceString = String(describing: box.price)
+                let change = Change(changeType: "Price", originalVar: originalPriceString, newVar: newPriceString, nameOfChangedItem: box.boxName)
+                modelContext.insert(change)
+            }
+            if box.boxDetails != boxStruct.originalBox.boxDetails && !boxStruct.originalBox.boxDetails.isEmpty {
+                let change = Change(changeType: "Box Details", originalVar: boxStruct.originalBox.boxDetails, newVar: box.boxDetails, nameOfChangedItem: box.boxName)
+                modelContext.insert(change)
+            }
+            if box.location.count < boxStruct.locationTagName.count {
+                var locationNames: [String] = []
+                for location in box.location {
+                    locationNames.append(location.name)
+                }
+                for name in boxStruct.locationTagName {
+                    if !locationNames.contains(name) {
+                        let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: box.boxName)
+                        modelContext.insert(change)
+                    }
+                }
+            }
+            if box.location.count > boxStruct.locationTagName.count {
+                for location in box.location {
+                    if !boxStruct.locationTagName.contains(location.name) {
+                        let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: box.boxName)
+                        modelContext.insert(change)
+                    }
+                }
+            }
+        
         }
     }
     
@@ -80,6 +131,8 @@ struct EditBoxView: View {
             box.photo = try await
             selectedItem?.loadTransferable(type: Data.self)
         }
+        let change = Change(changeType: "Photo", originalVar: boxStruct.originalBox.boxName, newVar: box.boxName, nameOfChangedItem: box.boxName)
+        modelContext.insert(change)
     }
 }
 

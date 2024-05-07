@@ -51,32 +51,30 @@ struct ItemsListView: View {
                                     .shadow(radius: 3)
                             }
                         }
-                        
-                        
-                        ForEach(item.location) { tag in
-                            HStack{
-                                Text(tag.name)
-                                    .foregroundColor(Color.white)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .multilineTextAlignment(.center)
-                                    .padding()
-                                    .frame(height: 27)
-                                    .background(Rectangle().fill(Color(.red))
-                                        .opacity(0.8))
-                                    .cornerRadius(10)
-                                Spacer()
-                            }
+                    }
+                    ForEach(item.location) { tag in
+                        HStack{
+                            Text(tag.name)
+                                .foregroundColor(Color.white)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .frame(height: 27)
+                                .background(Rectangle().fill(Color(.red))
+                                    .opacity(0.8))
+                                .cornerRadius(10)
+                            Spacer()
                         }
-                        
                     }
                 }
-
-                ForEach(boxes) { box in
-                    VStack{
-                        NavigationLink(value: box){
-                            HStack{
-                                Image(systemName: "shippingbox.fill")
-                                Text(box.boxName)
+            }
+            .onDelete(perform: deleteItems)
+            ForEach(boxes) { box in
+                VStack{
+                    NavigationLink(value: box){
+                        HStack{
+                            Image(systemName: "shippingbox.fill")
+                            Text(box.boxName)
                                     .font(.system(size: 20, weight: .bold))
                                 Spacer()
                                 if let imageData = box.photo, let uiImage = UIImage(data: imageData) {
@@ -110,12 +108,9 @@ struct ItemsListView: View {
                         }
                     }
                 }
-                .onDelete(perform: deleteBoxes)
+            .onDelete(perform: deleteBoxes)
             }
-            .onDelete(perform: deleteItems)
-
-            
-            
+        
             .overlay{
                 if items.isEmpty && boxes.isEmpty{
                     ContentUnavailableView(label: {
@@ -126,13 +121,21 @@ struct ItemsListView: View {
                 }
             }
         }
-    }
+        
+    
     init(searchString: String = "") {
         _items = Query(filter: #Predicate { item in
             if searchString.isEmpty {
                 true
             } else {
                 item.itemName.localizedStandardContains(searchString)
+            }
+        })
+        _boxes = Query(filter: #Predicate { box in
+            if searchString.isEmpty {
+                true
+            } else {
+                box.boxName.localizedStandardContains(searchString)
             }
         })
     }
@@ -153,6 +156,11 @@ struct ItemsListView: View {
 
 struct itemStruct {
     static var originalItem: Item = Item(itemName: "", quantity: "", itemDetails: "", location: [], quantityWarn: "")
+    static var locationTagName: [String] = []
+}
+
+struct boxStruct {
+    static var originalBox: Box = Box(boxName: "", boxQuantity: "", boxDetails: "", location: [])
     static var locationTagName: [String] = []
 }
 

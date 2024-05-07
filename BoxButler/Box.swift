@@ -17,7 +17,7 @@ class Box: Hashable, Identifiable {
     var location: [LocationTag] = []
     @Attribute(.externalStorage) var photo: Data?
     
-    init(boxName: String, boxQuantity: String, price: Decimal, boxDetails: String, location: [LocationTag]) {
+    init(boxName: String, boxQuantity: String, price: Decimal = 0.0, boxDetails: String, location: [LocationTag]) {
         self.boxName = boxName
         self.boxQuantity = boxQuantity
         self.price = price
