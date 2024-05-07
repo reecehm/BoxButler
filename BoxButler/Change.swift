@@ -13,13 +13,13 @@ class Change {
     var originalVar: String
     var newVar: String
     var nameOfChangedItem: String
+    var date: String
     
-    init(changeType: String, originalVar: String, newVar: String, nameOfChangedItem: String) {
+    init(changeType: String, originalVar: String, newVar: String, nameOfChangedItem: String, date: String) {
         self.changeType = changeType
         self.originalVar = originalVar
         self.newVar = newVar
         self.nameOfChangedItem = nameOfChangedItem
-        
-        
+        self.date = date        
     }
 }

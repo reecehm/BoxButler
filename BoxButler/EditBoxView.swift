@@ -78,21 +78,21 @@ struct EditBoxView: View {
         }
         .onDisappear{
             if box.boxName != boxStruct.originalBox.boxName && !boxStruct.originalBox.boxName.isEmpty {
-                let change = Change(changeType: "Box Name", originalVar: boxStruct.originalBox.boxName, newVar: box.boxName, nameOfChangedItem: boxStruct.originalBox.boxName)
+                let change = Change(changeType: "Box Name", originalVar: boxStruct.originalBox.boxName, newVar: box.boxName, nameOfChangedItem: boxStruct.originalBox.boxName, date: Date().description)
                 modelContext.insert(change)
             }
             if box.boxQuantity != boxStruct.originalBox.boxQuantity && !boxStruct.originalBox.boxQuantity.isEmpty {
-                let change = Change(changeType: "Quantity", originalVar: boxStruct.originalBox.boxQuantity, newVar: box.boxQuantity, nameOfChangedItem: box.boxName)
+                let change = Change(changeType: "Quantity", originalVar: boxStruct.originalBox.boxQuantity, newVar: box.boxQuantity, nameOfChangedItem: box.boxName, date: Date().description)
                 modelContext.insert(change)
             }
             if box.price != boxStruct.originalBox.price {
                 let originalPriceString = String(describing: boxStruct.originalBox.price)
                 let newPriceString = String(describing: box.price)
-                let change = Change(changeType: "Price", originalVar: originalPriceString, newVar: newPriceString, nameOfChangedItem: box.boxName)
+                let change = Change(changeType: "Price", originalVar: originalPriceString, newVar: newPriceString, nameOfChangedItem: box.boxName, date: Date().description)
                 modelContext.insert(change)
             }
             if box.boxDetails != boxStruct.originalBox.boxDetails && !boxStruct.originalBox.boxDetails.isEmpty {
-                let change = Change(changeType: "Box Details", originalVar: boxStruct.originalBox.boxDetails, newVar: box.boxDetails, nameOfChangedItem: box.boxName)
+                let change = Change(changeType: "Box Details", originalVar: boxStruct.originalBox.boxDetails, newVar: box.boxDetails, nameOfChangedItem: box.boxName, date: Date().description)
                 modelContext.insert(change)
             }
             if box.location.count < boxStruct.locationTagName.count {
@@ -102,7 +102,7 @@ struct EditBoxView: View {
                 }
                 for name in boxStruct.locationTagName {
                     if !locationNames.contains(name) {
-                        let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: box.boxName)
+                        let change = Change(changeType: "Removed Tag", originalVar: name, newVar: "", nameOfChangedItem: box.boxName, date: Date().description)
                         modelContext.insert(change)
                     }
                 }
@@ -110,7 +110,7 @@ struct EditBoxView: View {
             if box.location.count > boxStruct.locationTagName.count {
                 for location in box.location {
                     if !boxStruct.locationTagName.contains(location.name) {
-                        let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: box.boxName)
+                        let change = Change(changeType: "Added Tag", originalVar: "", newVar: location.name, nameOfChangedItem: box.boxName, date: Date().description)
                         modelContext.insert(change)
                     }
                 }
@@ -131,7 +131,7 @@ struct EditBoxView: View {
             box.photo = try await
             selectedItem?.loadTransferable(type: Data.self)
         }
-        let change = Change(changeType: "Photo", originalVar: boxStruct.originalBox.boxName, newVar: box.boxName, nameOfChangedItem: box.boxName)
+        let change = Change(changeType: "Photo", originalVar: boxStruct.originalBox.boxName, newVar: box.boxName, nameOfChangedItem: box.boxName, date: Date().description)
         modelContext.insert(change)
     }
 }

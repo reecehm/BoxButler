@@ -95,93 +95,83 @@ struct HomeView: View {
                 .opacity(0.5)
             List {
                 Section("Notifications") {
-                    ForEach(filteredItems, id: \.id) { item in
-                        if item.quantityWarn != "" && item.quantity <= item.quantityWarn {
-                                Text(item.itemName + " has low quantity.")
-                                .padding(.top, 8)
-                                .padding(.bottom, 8)
-                        }
-                    }
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 10)
-                          .fill(Color(.white))
-                          .padding(.vertical, 4)
-                    )
-                    .listRowSeparator(.hidden)
-                    .overlay(Group{
-                        if filteredItems.isEmpty {
-                            HStack{
-                                Text("No notifications")
+                    if filteredItems.isEmpty {
+                        HStack{
+                            ZStack{
                                 Image(systemName: "bell.and.waves.left.and.right.fill")
+                                    .font(.system(size: 40))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                    .padding(.top, 10)
+                                    .padding(.bottom, 10)
+                                    .bold()
+                                    .opacity(0.09)
+                                VStack{
+                                    Text("No Notifications")
+                                }
                             }
-                    }})
+                        }
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 10)
+                              .fill(Color(.white))
+                              .padding(.vertical, 4)
+                        )
+                        .listRowSeparator(.hidden)
+                    }
+                    else{
+                        ForEach(filteredItems, id: \.id) { item in
+                            if item.quantityWarn != "" && item.quantity <= item.quantityWarn {
+                                    Text(item.itemName + " has low quantity.")
+                                    .padding(.top, 8)
+                                    .padding(.bottom, 8)
+                            }
+                        }
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 10)
+                              .fill(Color(.white))
+                              .padding(.vertical, 4)
+                        )
+                        .listRowSeparator(.hidden)
+                    }
                 }
                 .headerProminence(.increased)
-                .onAppear {
-                    filteredItems = items.filter { item in
-                        if item.quantityWarn != "" {
-                            return item.quantity <= item.quantityWarn
-                        }
-                        return false // If quantityWarn is not set, exclude the item
-                    }
-                }
                 Section("Recent Changes"){
+                    if changes.isEmpty {
+                        ZStack{
+                            Image(systemName: "list.bullet.rectangle")
+                                .font(.system(size: 90))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.top, 10)
+                                .padding(.bottom, 10)
+                                .bold()
+                                .opacity(0.06)
+                            VStack{
+                                Text("Start adding items to see their")
+                                Text("recent changes here!")
+                            }
+                        }
+                        .listRowBackground(
+                            RoundedRectangle(cornerRadius: 10)
+                              .fill(Color(.white))
+                              .padding(.vertical, 4)
+                        )
+                        .listRowSeparator(.hidden)
+                    }
+                    else{
                         ForEach(changes.reversed()) { change in
-                            if change.changeType == "Removed Tag"{
-                                Text(stringFormatter(change: change))
-                            }
-                            else if change.changeType == "Added Tag" {
-                                VStack{
-                                    HStack{
-                                        Text(change.changeType)
-                                            .foregroundColor(.blue)
-                                        Text(change.newVar)
-                                        
-                                        Spacer()
-                                    }
-                                    HStack{
-                                        Text("to")
-                                        Text(change.nameOfChangedItem)
-                                        Spacer()
-                                    }
+                            VStack{
+                                HStack{
+                                    Text(dateFormatter(dateAndTime: change.date))
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                    Spacer()
+                                    Text(timeFormatter(dateAndTime: change.date))
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
                                 }
+                                Text(changeFormatter(change: change))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            else if change.changeType == "Photo"{
-                                Text("\(change.changeType) for \(change.originalVar) was changed.")
-                            }
-                            else if change.changeType == "New item created" {
-                                Text("\(change.changeType) named \(change.newVar).")
-                            }
-                            else if change.changeType == "New box created" {
-                                Text("\(change.changeType) named \(change.newVar).")
-                            }
-                            else {
-                                VStack {
-                                    HStack {
-                                        Text(change.changeType)
-                                            .foregroundColor(.blue)
-                                        Text("for")
-                                        Text(change.nameOfChangedItem)
-                                        
-                                        Spacer()
-                                    }
-                                    HStack {
-                                        Text("changed from")
-                                        Text(change.originalVar)
-                                            .foregroundColor(.red)
-                                        
-                                        Spacer()
-                                    }
-                                    HStack{
-                                        Text("to")
-                                            .multilineTextAlignment(.leading)
-                                        Text(change.newVar)
-                                            .foregroundColor(.green)
-                                            .multilineTextAlignment(.leading)
-                                        Spacer()
-                                    }
-                                }
-                            }
+
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
@@ -193,20 +183,16 @@ struct HomeView: View {
                             filteredItems = items.filter {$0.quantity <= $0.quantityWarn }
                         }
                     }
+                }
                 .headerProminence(.increased)
-                    .overlay(Group{
-                        if changes.isEmpty {
-                            HStack{
-                                VStack{
-                                    Text("Start adding items to see their")
-                                    Text("recent changes here!")
-                                    Image(systemName: "list.bullet.rectangle")
-                                        .padding(.top, 2)
-                                        .bold()
-                                }
-                            }
-                        }})
-                
+            }
+            .onAppear {
+                filteredItems = items.filter { item in
+                    if item.quantityWarn != "" {
+                        return item.quantity <= item.quantityWarn
+                    }
+                    return false // If quantityWarn is not set, exclude the item
+                }
             }
             .padding(.top, -8)
             .onAppear {
@@ -225,16 +211,65 @@ struct HomeView: View {
         }
     }
     
-    func stringFormatter (change: Change) -> AttributedString{
-                let string = (change.changeType + " " + change.originalVar + " from " + change.nameOfChangedItem)
-                let attributedString = NSMutableAttributedString(string: string)
-                attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-                attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+1, length: change.originalVar.count))
-                attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: change.changeType.count + change.originalVar.count+2, length: 4))
-                attributedString.addAttribute(.foregroundColor, value: UIColor.green, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
-                
-                return AttributedString(attributedString)
+    func changeFormatter (change: Change) -> AttributedString{
+        var string = ""
+        var finalAttributedString = NSMutableAttributedString()
+        if change.changeType == "Removed Tag"{
+            string = (change.changeType + " " + change.originalVar + " from " + change.nameOfChangedItem)
+            let attributedString = NSMutableAttributedString(string: string)
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+1, length: change.originalVar.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: change.changeType.count + change.originalVar.count+2, length: 4))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.green, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
+            finalAttributedString = attributedString
         }
+        else if change.changeType == "Added Tag"{
+            string = (change.changeType + " " + change.newVar + " to " + change.nameOfChangedItem)
+            let attributedString = NSMutableAttributedString(string: string)
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+1, length: change.newVar.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: change.changeType.count + change.newVar.count+1, length: 2))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.green, range: NSRange(location: change.changeType.count + change.newVar.count + 5, length: change.nameOfChangedItem.count))
+            finalAttributedString = attributedString
+        }
+        else if change.changeType == "Photo"{
+            string = (change.changeType + " for " + change.nameOfChangedItem + " was changed.")
+            let attributedString = NSMutableAttributedString(string: string)
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
+            finalAttributedString = attributedString
+        }
+        else if change.changeType == "New item created" || change.changeType == "New box created"{
+            string = (change.changeType + " named " + change.nameOfChangedItem + ".")
+            let attributedString = NSMutableAttributedString(string: string)
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+7, length: change.nameOfChangedItem.count))
+            finalAttributedString = attributedString
+        }
+        else{
+            string = (change.changeType + " for " + change.nameOfChangedItem + " changed from " + change.originalVar + " to " + change.newVar)
+            let attributedString = NSMutableAttributedString(string: string)
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+19, length: change.originalVar.count))
+            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+change.originalVar.count + 23, length: change.newVar.count))
+            finalAttributedString = attributedString
+        }
+        return AttributedString(finalAttributedString)
+    }
+    
+    func dateFormatter (dateAndTime: String) -> String{
+        var date = ""
+        date = String(dateAndTime.dropLast(15))
+        return date
+    }
+    func timeFormatter (dateAndTime: String) -> String{
+        var time = ""
+        time = String(dateAndTime.dropFirst(11))
+        time = String(time.dropLast(6))
+        return time
+    }
+    
     
 }
 #Preview {

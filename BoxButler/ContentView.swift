@@ -37,6 +37,15 @@ struct ContentView: View {
                    else if selectedTab == .second {
                        NavigationStack(path: $navPath){
                                ItemsListView()
+                               .overlay{
+                                   if items.isEmpty && boxes.isEmpty{
+                                       ContentUnavailableView(label: {
+                                           Label("No Items", systemImage: "circle.grid.3x3.fill")
+                                       }, description: {
+                                           Text("Click the plus to add items.")
+                                       })
+                                   }
+                               }
                                .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
                                        .sheet(isPresented: $isShowingAddLocationSheet, content: {
                                            AddItemLocationSheet(item: item)
@@ -283,7 +292,7 @@ struct ContentView: View {
                                 dismiss()
                                 modelContext.insert(item)
                                 isShowingSelectionSheet = false
-                                let change = Change(changeType: "New item created", originalVar: "nonexistant item", newVar: item.itemName, nameOfChangedItem: item.itemName)
+                                let change = Change(changeType: "New item created", originalVar: "nonexistant item", newVar: item.itemName, nameOfChangedItem: item.itemName, date: Date().description)
                                 modelContext.insert(change)
                             }
                         }
@@ -380,7 +389,7 @@ struct ContentView: View {
                             else{
                                 modelContext.insert(box)
                                 dismiss()
-                                let change = Change(changeType: "New box created", originalVar: "nonexistant item", newVar: box.boxName, nameOfChangedItem: box.boxName)
+                                let change = Change(changeType: "New box created", originalVar: "nonexistant item", newVar: box.boxName, nameOfChangedItem: box.boxName, date: Date().description)
                                 modelContext.insert(change)
                                 isShowingSelectionSheet = false
                             }

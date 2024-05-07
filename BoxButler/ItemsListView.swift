@@ -110,16 +110,7 @@ struct ItemsListView: View {
                 }
             .onDelete(perform: deleteBoxes)
             }
-        
-            .overlay{
-                if items.isEmpty && boxes.isEmpty{
-                    ContentUnavailableView(label: {
-                        Label("No Items", systemImage: "circle.grid.3x3.fill")
-                    }, description: {
-                        Text("Click the plus to add items.")
-                    })
-                }
-            }
+            .padding(.bottom, -10)
         }
         
     

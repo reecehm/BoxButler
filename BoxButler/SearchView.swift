@@ -21,6 +21,13 @@ struct SearchView: View {
     var body: some View {
                 NavigationStack{
                     ItemsListView(searchString: searchText)
+                        .overlay{
+                            if items.isEmpty && boxes.isEmpty{
+                                ContentUnavailableView(label: {
+                                    Label("No Items", systemImage: "circle.grid.3x3.fill")
+                                })
+                            }
+                        }
                         .navigationTitle("Search")
                         .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
                                 .sheet(isPresented: $isShowingAddLocationSheet, content: {
