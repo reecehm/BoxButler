@@ -13,7 +13,9 @@ struct HomeView: View {
     @Query var boxes: [Box]
     @Query var changes: [Change]
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
+    let tanColorUI = UIColor(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098, alpha: 1.0)
     let blueColor = UIColor(red: 65/255, green: 105/255, blue: 225/255, alpha: 1.0)
+    let redColor = UIColor(red: 196/255, green: 30/255, blue: 58/255, alpha: 1.0)
     @State var totalQuantity:Int = 0
     @State var totalInventoryValue: Decimal = 0.0
     @State var filteredItems: [Item] = []
@@ -105,14 +107,16 @@ struct HomeView: View {
                                     .padding(.bottom, 10)
                                     .bold()
                                     .opacity(0.09)
+                                    .foregroundColor(Color("TextColor"))
                                 VStack{
                                     Text("No Notifications")
+                                        .foregroundColor(Color("TextColor"))
                                 }
                             }
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color(.white))
+                              .fill(Color("NotificationColor"))
                               .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
@@ -127,7 +131,7 @@ struct HomeView: View {
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color(.white))
+                              .fill(Color("NotificationColor"))
                               .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
@@ -144,9 +148,12 @@ struct HomeView: View {
                                 .padding(.bottom, 10)
                                 .bold()
                                 .opacity(0.06)
+                                .foregroundColor(Color("TextColor"))
                             VStack{
                                 Text("Start adding items to see their")
+                                    .foregroundColor(Color("TextColor"))
                                 Text("recent changes here!")
+                                    .foregroundColor(Color("TextColor"))
                             }
                         }
                         .listRowBackground(
@@ -175,7 +182,7 @@ struct HomeView: View {
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color(.white))
+                              .fill(Color("NotificationColor"))
                               .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
@@ -218,41 +225,39 @@ struct HomeView: View {
             string = (change.changeType + " " + change.originalVar + " from " + change.nameOfChangedItem)
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+1, length: change.originalVar.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: change.changeType.count + change.originalVar.count+2, length: 4))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.green, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: redColor, range: NSRange(location: change.changeType.count+1, length: change.originalVar.count))
+            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
         else if change.changeType == "Added Tag"{
             string = (change.changeType + " " + change.newVar + " to " + change.nameOfChangedItem)
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+1, length: change.newVar.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: change.changeType.count + change.newVar.count+1, length: 2))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.green, range: NSRange(location: change.changeType.count + change.newVar.count + 5, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+1, length: change.newVar.count))
+            attributedString.addAttribute(.foregroundColor, value: redColor, range: NSRange(location: change.changeType.count + change.newVar.count + 5, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
         else if change.changeType == "Photo"{
             string = (change.changeType + " for " + change.nameOfChangedItem + " was changed.")
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
         else if change.changeType == "New item created" || change.changeType == "New box created"{
             string = (change.changeType + " named " + change.nameOfChangedItem + ".")
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+7, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+7, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
         else{
             string = (change.changeType + " for " + change.nameOfChangedItem + " changed from " + change.originalVar + " to " + change.newVar)
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: UIColor.red, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
-            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+19, length: change.originalVar.count))
-            attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+change.originalVar.count + 23, length: change.newVar.count))
+            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: redColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+19, length: change.originalVar.count))
+            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+change.originalVar.count + 23, length: change.newVar.count))
             finalAttributedString = attributedString
         }
         return AttributedString(finalAttributedString)
