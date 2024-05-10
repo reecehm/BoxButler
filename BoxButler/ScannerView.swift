@@ -35,12 +35,20 @@ struct ScannerView: View {
                 mainView
             case .cameraNotAvailable:
                 Text("Your device doesn't have a camera")
+                    .padding(.bottom, 200)
+                tabBarItem(.first, title: "back", icon: "arrowshape.left", selectedIcon: "arrowshape.left")
             case .scannerNotAvailable:
                 Text("Your device doesn't have support for scanning barcode with this app")
+                    .padding(.bottom, 200)
+                tabBarItem(.first, title: "back", icon: "arrowshape.left", selectedIcon: "arrowshape.left")
             case .cameraAccessNotGranted:
                 Text("Please provide access to the camera in settings")
+                    .padding(.bottom, 200)
+                tabBarItem(.first, title: "back", icon: "arrowshape.left", selectedIcon: "arrowshape.left")
             case .notDetermined:
                 Text("Requesting camera access")
+                    .padding(.bottom, 200)
+                tabBarItem(.first, title: "back", icon: "arrowshape.left", selectedIcon: "arrowshape.left")
             }
             if showPopup {
                 Color.black.opacity(0.7)
