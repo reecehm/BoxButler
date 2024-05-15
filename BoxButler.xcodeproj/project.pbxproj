@@ -27,7 +27,6 @@
 		53FC7A652B9F566700DC2EE0 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FC7A642B9F566700DC2EE0 /* Box.swift */; };
 		53FE8E652B976FEA00EA9C95 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FE8E642B976FEA00EA9C95 /* HomeView.swift */; };
 		CD1B41362BD6C00E00A6F88E /* Change.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1B41352BD6C00E00A6F88E /* Change.swift */; };
-		CDD15A452BA34444007B610A /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD15A442BA34444007B610A /* PreferencesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,7 +51,6 @@
 		53FC7A642B9F566700DC2EE0 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		53FE8E642B976FEA00EA9C95 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		CD1B41352BD6C00E00A6F88E /* Change.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Change.swift; sourceTree = "<group>"; };
-		CDD15A442BA34444007B610A /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +98,6 @@
 				5313FCC02BC70FB600871D92 /* EditBoxView.swift */,
 				538F983D2B9A187900E38D87 /* SearchView.swift */,
 				5317D78F2B952A9D00BFBF00 /* SettingsView.swift */,
-				CDD15A442BA34444007B610A /* PreferencesView.swift */,
 				5355559D2BB7074300FB4ECA /* AppViewModel.swift */,
 				5355559F2BB707F200FB4ECA /* ScannerView.swift */,
 				535555A12BB7082300FB4ECA /* DataScannerView.swift */,
@@ -191,7 +188,6 @@
 				535555A22BB7082300FB4ECA /* DataScannerView.swift in Sources */,
 				536AEF372BC860DB002ED6DE /* LocationTag.swift in Sources */,
 				5317D7922B952C8000BFBF00 /* ShelfView.swift in Sources */,
-				CDD15A452BA34444007B610A /* PreferencesView.swift in Sources */,
 				5355559E2BB7074300FB4ECA /* AppViewModel.swift in Sources */,
 				53FC7A652B9F566700DC2EE0 /* Box.swift in Sources */,
 				535555A02BB707F200FB4ECA /* ScannerView.swift in Sources */,
