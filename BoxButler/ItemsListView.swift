@@ -27,6 +27,7 @@ struct ItemsListView: View {
     @Query var items: [Item]
     @Query var boxes: [Box]
     @Query var changes: [Change]
+    @Query var tags: [LocationTag]
     
     var body: some View {
         List {
@@ -60,8 +61,7 @@ struct ItemsListView: View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .frame(height: 27)
-                                .background(Rectangle().fill(Color(.red))
-                                    .opacity(0.8))
+                                .background(Rectangle().fill(Color("AccentColor")))
                                 .cornerRadius(10)
                             Spacer()
                         }
@@ -100,8 +100,7 @@ struct ItemsListView: View {
                                     .multilineTextAlignment(.center)
                                     .padding()
                                     .frame(height: 27)
-                                    .background(Rectangle().fill(Color(.red))
-                                        .opacity(0.8))
+                                    .background(Rectangle().fill(Color("AccentColor")))
                                     .cornerRadius(10)
                                 Spacer()
                             }
@@ -114,22 +113,16 @@ struct ItemsListView: View {
         }
         
     
-    init(searchString: String = "") {
-        _items = Query(filter: #Predicate { item in
-            if searchString.isEmpty {
-                true
-            } else {
-                item.itemName.localizedStandardContains(searchString)
-            }
-        })
-        _boxes = Query(filter: #Predicate { box in
-            if searchString.isEmpty {
-                true
-            } else {
-                box.boxName.localizedStandardContains(searchString)
-            }
-        })
-    }
+    init(searchString: String = "", selectedTag: String) {
+            _items = Query(filter: #Predicate { item in
+                (searchString.isEmpty || item.itemName.localizedStandardContains(searchString)) &&
+                (selectedTag == "" || item.location.contains { $0.name == selectedTag })
+            })
+            
+            _boxes = Query(filter: #Predicate { box in
+                searchString.isEmpty || box.boxName.localizedStandardContains(searchString)
+            })
+        }
     
     func deleteItems(at offsets: IndexSet) {
         for offsets in offsets {

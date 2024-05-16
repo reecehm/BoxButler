@@ -36,7 +36,7 @@ struct ContentView: View {
                    }
                    else if selectedTab == .second {
                        NavigationStack(path: $navPath){
-                               ItemsListView()
+                           ItemsListView(selectedTag: "")
                                .overlay{
                                    if items.isEmpty && boxes.isEmpty{
                                        ContentUnavailableView(label: {

@@ -11,35 +11,60 @@ import SwiftUI
 struct SearchView: View {
     
     @State private var searchText = ""
+    @State private var isShowingLocationTagSheet = false
+    @State private var selectedLocationTag: String = ""
     @Query var items: [Item]
     @Query var boxes: [Box]
     @State private var isShowingAddLocationSheet = false
     @State var shouldShowPlus: Bool = false
-    
     @Binding var selectedTab: Tab
+    @Query var tags: [LocationTag]
     
     var body: some View {
-                NavigationStack{
-                    ItemsListView(searchString: searchText)
-                        .overlay{
-                            if items.isEmpty && boxes.isEmpty{
-                                ContentUnavailableView(label: {
-                                    Label("No Items", systemImage: "circle.grid.3x3.fill")
-                                })
-                            }
-                        }
-                        .navigationTitle("Search")
-                        .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
-                                .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                                    AddItemLocationSheet(item: item)
-                                })}
-                        .navigationDestination(for: Box.self) {box in EditBoxView(box: box, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
-                                .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                                    AddBoxLocationSheet(box: box)
-                                })}
-                    tabBarView
+        NavigationStack {
+            VStack {
+//                TextField("Search", text: $searchText)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//                    .padding()
+                HStack{
+                    Button(action: {
+                        isShowingLocationTagSheet.toggle()
+                    }) {
+                        Text("Select Location Tag")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .sheet(isPresented: $isShowingLocationTagSheet, content: {
+                        LocationTagSelectionView(selectedLocationTag: $selectedLocationTag)
+                            .presentationDetents([.height(250), .medium, .large])
+                    })
+                    .padding(.bottom)
                 }
-                .searchable(text: $searchText)
+                ItemsListView(searchString: searchText, selectedTag: selectedLocationTag) // Pass selectedLocationTag to filter results
+                    .overlay {
+                        if items.isEmpty && boxes.isEmpty {
+                            ContentUnavailableView(label: {
+                                Label("No Items", systemImage: "circle.grid.3x3.fill")
+                            })
+                        }
+                    }
+                    .navigationTitle("Search")
+                    .navigationDestination(for: Item.self) { item in
+                        EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
+                            .sheet(isPresented: $isShowingAddLocationSheet, content: {
+                                AddItemLocationSheet(item: item)
+                            })
+                    }
+                    .navigationDestination(for: Box.self) { box in
+                        EditBoxView(box: box, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
+                            .sheet(isPresented: $isShowingAddLocationSheet, content: {
+                                AddBoxLocationSheet(box: box)
+                            })
+                    }
+                
+                tabBarView
+            }
+        }
+        .searchable(text: $searchText)
     }
     
     init(searchString: String = "", selectedTab: Binding<Tab>) {

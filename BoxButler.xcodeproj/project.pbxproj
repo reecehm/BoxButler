@@ -27,6 +27,7 @@
 		53FC7A652B9F566700DC2EE0 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FC7A642B9F566700DC2EE0 /* Box.swift */; };
 		53FE8E652B976FEA00EA9C95 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FE8E642B976FEA00EA9C95 /* HomeView.swift */; };
 		CD1B41362BD6C00E00A6F88E /* Change.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1B41352BD6C00E00A6F88E /* Change.swift */; };
+		CD3820C52BF273DE00F49300 /* LocationTagSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3820C42BF273DE00F49300 /* LocationTagSelectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		53FC7A642B9F566700DC2EE0 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
 		53FE8E642B976FEA00EA9C95 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		CD1B41352BD6C00E00A6F88E /* Change.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Change.swift; sourceTree = "<group>"; };
+		CD3820C42BF273DE00F49300 /* LocationTagSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTagSelectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 				5317D76F2B9128C500BFBF00 /* EditItemView.swift */,
 				5313FCC02BC70FB600871D92 /* EditBoxView.swift */,
 				538F983D2B9A187900E38D87 /* SearchView.swift */,
+				CD3820C42BF273DE00F49300 /* LocationTagSelectionView.swift */,
 				5317D78F2B952A9D00BFBF00 /* SettingsView.swift */,
 				5355559D2BB7074300FB4ECA /* AppViewModel.swift */,
 				5355559F2BB707F200FB4ECA /* ScannerView.swift */,
@@ -201,6 +204,7 @@
 				536AEF3B2BCDB5EF002ED6DE /* AddBoxLocationSheet.swift in Sources */,
 				5317D7602B90ECD300BFBF00 /* BoxButlerApp.swift in Sources */,
 				5317D7702B9128C500BFBF00 /* EditItemView.swift in Sources */,
+				CD3820C52BF273DE00F49300 /* LocationTagSelectionView.swift in Sources */,
 				CD1B41362BD6C00E00A6F88E /* Change.swift in Sources */,
 				5313FCC12BC70FB600871D92 /* EditBoxView.swift in Sources */,
 			);

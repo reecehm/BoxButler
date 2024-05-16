@@ -43,7 +43,6 @@ struct AddItemLocationSheet: View {
                             Image(systemName: "tag.fill")
                         }
                     }
-                    
                 }
                 ForEach(item.location) { tag in
                         HStack{
@@ -58,8 +57,7 @@ struct AddItemLocationSheet: View {
                                     .multilineTextAlignment(.center)
                                     .padding()
                                     .frame(height: 27)
-                                    .background(Rectangle().fill(Color(.red))
-                                        .opacity(0.8))
+                                    .background(Rectangle().fill(Color("AccentColor")))
                                     .cornerRadius(10)
                                     .padding(.leading)
                                 Spacer()
@@ -100,30 +98,27 @@ struct AddItemLocationSheet: View {
                         }
                         
                     }
-                            ForEach(tags) { tag in
-                                if !item.location.contains(tag){
-                                    HStack{
-                                        Button{
-                                            item.location.append(tag)
-                                        } label: {
-                                            Text(tag.name)
-                                                .foregroundColor(Color.white)
-                                                .fixedSize(horizontal: false, vertical: true)
-                                                .multilineTextAlignment(.center)
-                                                .padding()
-                                                .frame(height: 27)
-                                                .background(Rectangle().fill(Color(.gray))
-                                                    .opacity(0.5))
-                                                .cornerRadius(10)
-                                                .padding(.leading)
-                                            Spacer()
-                                        }
-                                    }
+                    ForEach(tags) { tag in
+                        if !item.location.contains(tag){
+                            HStack{
+                                Button{
+                                    item.location.append(tag)
+                                } label: {
+                                    Text(tag.name)
+                                        .foregroundColor(Color.white)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .multilineTextAlignment(.center)
+                                        .padding()
+                                        .frame(height: 27)
+                                        .background(Rectangle().fill(Color(.gray))
+                                            .opacity(0.5))
+                                        .cornerRadius(10)
+                                        .padding(.leading)
+                                    Spacer()
                                 }
-                               
                             }
-                        
-                    
+                        }
+                    }
                 }
                 Spacer()
             }

@@ -56,8 +56,7 @@ struct EditBoxView: View {
                             .multilineTextAlignment(.center)
                             .padding()
                             .frame(height: 27)
-                            .background(Rectangle().fill(Color(.red))
-                                .opacity(0.8))
+                            .background(Rectangle().fill(Color("AccentColor")))
                             .cornerRadius(10)
                         Spacer()
                     }
