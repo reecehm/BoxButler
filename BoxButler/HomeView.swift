@@ -19,7 +19,8 @@ struct HomeView: View {
     @State var totalQuantity:Int = 0
     @State var totalInventoryValue: Decimal = 0.0
     @State var filteredItems: [Item] = []
-
+    @Binding var notificationCount: String
+    
     var body: some View {
         VStack{
             ZStack {
@@ -116,23 +117,23 @@ struct HomeView: View {
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color("NotificationColor"))
-                              .padding(.vertical, 4)
+                                .fill(Color("NotificationColor"))
+                                .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
                     }
                     else{
                         ForEach(filteredItems, id: \.id) { item in
                             if item.quantityWarn != "" && item.quantity <= item.quantityWarn {
-                                    Text(item.itemName + " has low quantity.")
+                                Text(item.itemName + " has low quantity.")
                                     .padding(.top, 8)
                                     .padding(.bottom, 8)
                             }
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color("NotificationColor"))
-                              .padding(.vertical, 4)
+                                .fill(Color("NotificationColor"))
+                                .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
                     }
@@ -158,8 +159,8 @@ struct HomeView: View {
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color(.white))
-                              .padding(.vertical, 4)
+                                .fill(Color(.white))
+                                .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
                     }
@@ -178,12 +179,12 @@ struct HomeView: View {
                                 Text(changeFormatter(change: change))
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
-
+                            
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color("NotificationColor"))
-                              .padding(.vertical, 4)
+                                .fill(Color("NotificationColor"))
+                                .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
                         .onAppear {
@@ -199,6 +200,13 @@ struct HomeView: View {
                         return item.quantity <= item.quantityWarn
                     }
                     return false // If quantityWarn is not set, exclude the item
+                }
+                if filteredItems.isEmpty{
+                    notificationCount = ""
+                }
+                else{
+                    notificationCount = String(filteredItems.count)
+                    
                 }
             }
             .padding(.top, -8)
@@ -277,6 +285,6 @@ struct HomeView: View {
     
     
 }
-#Preview {
-    HomeView()
-}
+//#Preview {
+//    HomeView()
+//}

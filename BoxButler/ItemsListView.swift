@@ -111,6 +111,7 @@ struct ItemsListView: View {
             }
             .padding(.bottom, -10)
         }
+    
         
     
     init(searchString: String = "", selectedTag: String) {

@@ -7,6 +7,21 @@
 
 import SwiftUI
 import SwiftData
+import Firebase
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+
+  func application(_ application: UIApplication,
+
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+
+    FirebaseApp.configure()
+    return true
+
+  }
+
+}
 
 class ScanState: ObservableObject{
     @Published var isScanning: Bool
@@ -18,6 +33,7 @@ class ScanState: ObservableObject{
 
 @main
 struct BoxButlerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @ObservedObject var scanState = ScanState(isScanning: false)
     @StateObject private var vm = AppViewModel()
     let modelContainer: ModelContainer
