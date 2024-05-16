@@ -26,13 +26,14 @@ struct ContentView: View {
     @State private var isShowingSelectionSheet = false
     @State var shouldShowPlus: Bool = false
     @State private var navPath = NavigationPath()
+    @State private var notificationCount: String = ""
     
     
     var body: some View {
            VStack(spacing: 0) {
                ZStack {
                    if selectedTab == .first {
-                       HomeView()
+                       HomeView(notificationCount: $notificationCount)
                    }
                    else if selectedTab == .second {
                        NavigationStack(path: $navPath){
@@ -116,11 +117,11 @@ struct ContentView: View {
                     .opacity(0.5)
                 
                 HStack(spacing: 9) {
-                    tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
-                    tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
-                    tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
-                    tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
-                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
+                    tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill", notification: true)
+                    tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill", notification: false)
+                    tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass", notification: false)
+                    tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder", notification: false)
+                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear", notification: false)
                 }
                 .padding(.top, 20)
             }
@@ -131,13 +132,29 @@ struct ContentView: View {
     }
 
        
-    func tabBarItem(_ tab: Tab, title: String, icon: String, selectedIcon: String) -> some View {
+    func tabBarItem(_ tab: Tab, title: String, icon: String, selectedIcon: String, notification: Bool) -> some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: 3) {
                 VStack {
-                    Image(systemName: (selectedTab == tab ? selectedIcon : icon))
-                        .font(selectedTab == tab ? .system(size: 24).weight(.heavy) : .system(size: 24))
-                        .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
+                    ZStack{
+                        Image(systemName: (selectedTab == tab ? selectedIcon : icon))
+                            .font(selectedTab == tab ? .system(size: 24).weight(.heavy) : .system(size: 24))
+                            .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
+                        if notification {
+                            if notificationCount != ""{
+                                ZStack{
+                                    Image(systemName: "circlebadge.fill")
+                                        .font(.system(size: 21))
+                                    Text(notificationCount)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                        .foregroundColor(Color(.white))
+                                        .font(.system(size: 11))
+                                }
+                                .padding(.leading, 15)
+                                .padding(.bottom, 15)
+                            }
+                        }
+                    }
                 }
                 .frame(width: 55, height: 28)
                 

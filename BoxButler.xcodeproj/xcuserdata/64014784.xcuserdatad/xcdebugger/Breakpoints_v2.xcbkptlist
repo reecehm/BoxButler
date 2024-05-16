@@ -31,8 +31,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "32">
+                  endingLineNumber = "0">
                </Location>
                <Location
                   uuid = "F9293A72-4DA6-46B1-BAA0-CF4AD2DDDE89 - 2102e778295306"
@@ -46,10 +45,25 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "2"
-                  endingLineNumber = "2"
-                  offsetFromSymbolStart = "68">
+                  endingLineNumber = "2">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D7E87E49-D890-4665-9930-DFA16BCC8906"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BoxButler/SettingsView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
