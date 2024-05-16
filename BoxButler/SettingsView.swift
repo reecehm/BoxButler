@@ -7,19 +7,33 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct SettingsView: View {
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Profile")) {
-                    Button(action: {}) {
-                        Text("Make a profile")
+
+        NavigationStack{
+            ZStack {
+                Form {
+                    Section("Preferences"){
+                        HStack{
+                            Button{
+                                
+                            } label: {
+                                Text("Dark Mode")
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                        }
+
+                        
                     }
+                    
+                    
                 }
             }
-            .navigationBarTitle("Settings")
         }
     }
+}
+
+#Preview {
+    SettingsView()
 }
