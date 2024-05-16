@@ -32,7 +32,7 @@ struct ContentView: View {
            VStack(spacing: 0) {
                ZStack {
                    if selectedTab == .first {
-                       HomeView(selectedTab: $selectedTab)
+                       HomeView()
                    }
                    else if selectedTab == .second {
                        NavigationStack(path: $navPath){

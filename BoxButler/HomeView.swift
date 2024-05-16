@@ -19,14 +19,42 @@ struct HomeView: View {
     @State var totalQuantity:Int = 0
     @State var totalInventoryValue: Decimal = 0.0
     @State var filteredItems: [Item] = []
-    @Binding var selectedTab: Tab
-
 
     var body: some View {
         VStack{
             ZStack {
                 HStack{
-                    tabBarItem(.fifth, title: "Join a Shared Inventory")
+                    Spacer()
+                    Text("Not in an Organization? Click here to join a group.")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .frame(width: 230, height: 88)
+                        .background(Rectangle().fill(.thinMaterial))
+                        .cornerRadius(10)
+                    Spacer()
+                    VStack{
+                        Text("Username")
+                            .foregroundColor(Color.white)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .frame(width: 120
+                                   , height: 40
+                            )
+                            .background(Rectangle().fill(Color(tanColor)))
+                            .cornerRadius(10)
+                        Text("Group")
+                            .foregroundColor(Color.white)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .frame(width: 120
+                                   , height: 40
+                            )
+                            .background(Rectangle().fill(Color(tanColor)))
+                            .cornerRadius(10)
+                    }
+                    Spacer()
                 }
             }
             HStack {
@@ -130,7 +158,7 @@ struct HomeView: View {
                         }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: 10)
-                              .fill(Color(("NotificationColor")))
+                              .fill(Color(.white))
                               .padding(.vertical, 4)
                         )
                         .listRowSeparator(.hidden)
@@ -187,19 +215,6 @@ struct HomeView: View {
                     }
                 }
             }
-        }
-    }
-    
-    func tabBarItem(_ tab: Tab, title: String) -> some View {
-        ZStack {
-                Text(title)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .frame(height: 44)
-                    .background(Rectangle().fill(Color.red.opacity(0.65)).cornerRadius(10))
-        }
-        .onTapGesture {
-            selectedTab = tab
         }
     }
     
@@ -262,6 +277,6 @@ struct HomeView: View {
     
     
 }
-//#Preview {
-//    HomeView()
-//}
+#Preview {
+    HomeView()
+}
