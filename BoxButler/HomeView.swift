@@ -13,50 +13,35 @@ struct HomeView: View {
     @Query var boxes: [Box]
     @Query var changes: [Change]
     let tanColor = Color(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098)
+    let otherBlueColor = Color(red: 65/255, green: 105/255, blue: 225/255)
     let tanColorUI = UIColor(red: 0.6784313725490196, green: 0.5098039215686274, blue: 0.4392156862745098, alpha: 1.0)
     let blueColor = UIColor(red: 65/255, green: 105/255, blue: 225/255, alpha: 1.0)
     let redColor = UIColor(red: 196/255, green: 30/255, blue: 58/255, alpha: 1.0)
+    let greenColor = UIColor(red: 22/255, green: 141/255, blue: 115/255, alpha: 1.0)
     @State var totalQuantity:Int = 0
     @State var totalInventoryValue: Decimal = 0.0
     @State var filteredItems: [Item] = []
     @Binding var notificationCount: String
+    @State private var animate = false
     
     var body: some View {
         VStack{
-            ZStack {
-                HStack{
-                    Spacer()
-                    Text("Not in an Organization? Click here to join a group.")
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .frame(width: 230, height: 88)
-                        .background(Rectangle().fill(.thinMaterial))
-                        .cornerRadius(10)
-                    Spacer()
-                    VStack{
-                        Text("Username")
-                            .foregroundColor(Color.white)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .frame(width: 120
-                                   , height: 40
-                            )
-                            .background(Rectangle().fill(Color(tanColor)))
-                            .cornerRadius(10)
-                        Text("Group")
-                            .foregroundColor(Color.white)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .frame(width: 120
-                                   , height: 40
-                            )
-                            .background(Rectangle().fill(Color(tanColor)))
-                            .cornerRadius(10)
-                    }
-                    Spacer()
-                }
+            HStack{
+                Image("logo")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                Text("BoxButler")
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: 40, weight: .bold))
+            }
+            .background{UnevenRoundedRectangle(cornerRadii: .init(
+                topLeading: animate ? 10.0 : 80.0,
+                bottomLeading: animate ? 80.0 : 10.0,
+                bottomTrailing: animate ? 80.0 : 10.0,
+                topTrailing: animate ? 10.0 : 80.0))
+            .foregroundStyle(.indigo)
+            .frame(width: 400, height: 204)
+            .padding()
             }
             HStack {
                 Divider()
@@ -196,17 +181,17 @@ struct HomeView: View {
             }
             .onAppear {
                 filteredItems = items.filter { item in
-                    if item.quantityWarn != "" {
+                    if item.quantityWarn != "" && item.quantity != "" {
                         return item.quantity <= item.quantityWarn
                     }
                     return false // If quantityWarn is not set, exclude the item
                 }
+                print(filteredItems.count)
                 if filteredItems.isEmpty{
                     notificationCount = ""
                 }
                 else{
                     notificationCount = String(filteredItems.count)
-                    
                 }
             }
             .padding(.top, -8)
@@ -219,7 +204,7 @@ struct HomeView: View {
                         totalQuantity += quantity
                         totalInventoryValue += Decimal(quantity) * item.price
                     } else {
-                        print("Invalid quantity value for item: \(item)")
+                        item.quantity = "0"
                     }
                 }
             }
@@ -234,14 +219,14 @@ struct HomeView: View {
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
             attributedString.addAttribute(.foregroundColor, value: redColor, range: NSRange(location: change.changeType.count+1, length: change.originalVar.count))
-            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: greenColor, range: NSRange(location: change.changeType.count + change.originalVar.count + 7, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
         else if change.changeType == "Added Tag"{
             string = (change.changeType + " " + change.newVar + " to " + change.nameOfChangedItem)
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+1, length: change.newVar.count))
+            attributedString.addAttribute(.foregroundColor, value: greenColor, range: NSRange(location: change.changeType.count+1, length: change.newVar.count))
             attributedString.addAttribute(.foregroundColor, value: redColor, range: NSRange(location: change.changeType.count + change.newVar.count + 5, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
@@ -249,23 +234,23 @@ struct HomeView: View {
             string = (change.changeType + " for " + change.nameOfChangedItem + " was changed.")
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: greenColor, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
-        else if change.changeType == "New item created" || change.changeType == "New box created"{
+        else if change.changeType == "New item created" || change.changeType == "New box created" || change.changeType == "Item deleted" || change.changeType == "Box deleted"{
             string = (change.changeType + " named " + change.nameOfChangedItem + ".")
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+7, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: greenColor, range: NSRange(location: change.changeType.count+7, length: change.nameOfChangedItem.count))
             finalAttributedString = attributedString
         }
         else{
             string = (change.changeType + " for " + change.nameOfChangedItem + " changed from " + change.originalVar + " to " + change.newVar)
             let attributedString = NSMutableAttributedString(string: string)
             attributedString.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: change.changeType.count))
-            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
+            attributedString.addAttribute(.foregroundColor, value: greenColor, range: NSRange(location: change.changeType.count+5, length: change.nameOfChangedItem.count))
             attributedString.addAttribute(.foregroundColor, value: redColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+19, length: change.originalVar.count))
-            attributedString.addAttribute(.foregroundColor, value: tanColorUI, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+change.originalVar.count + 23, length: change.newVar.count))
+            attributedString.addAttribute(.foregroundColor, value: greenColor, range: NSRange(location: change.changeType.count + change.nameOfChangedItem.count+change.originalVar.count + 23, length: change.newVar.count))
             finalAttributedString = attributedString
         }
         return AttributedString(finalAttributedString)
@@ -273,13 +258,12 @@ struct HomeView: View {
     
     func dateFormatter (dateAndTime: String) -> String{
         var date = ""
-        date = String(dateAndTime.dropLast(15))
+        date = String(dateAndTime.dropLast(9))
         return date
     }
     func timeFormatter (dateAndTime: String) -> String{
         var time = ""
-        time = String(dateAndTime.dropFirst(11))
-        time = String(time.dropLast(6))
+        time = String(dateAndTime.dropFirst(8))
         return time
     }
     

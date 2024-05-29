@@ -230,7 +230,6 @@ struct ScannerView: View {
                     tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
                     tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
                     tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
-                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
                 }
                 .padding(.top, 20)
             }

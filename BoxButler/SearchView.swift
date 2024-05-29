@@ -11,60 +11,39 @@ import SwiftUI
 struct SearchView: View {
     
     @State private var searchText = ""
-    @State private var isShowingLocationTagSheet = false
-    @State private var selectedLocationTag: String = ""
     @Query var items: [Item]
     @Query var boxes: [Box]
     @State private var isShowingAddLocationSheet = false
     @State var shouldShowPlus: Bool = false
     @Binding var selectedTab: Tab
     @Query var tags: [LocationTag]
+    @State var isSaved = true
+    @State var activeTagArray: [LocationTag] = []
+    @State var availableTagArray: [LocationTag] = []
+    @State var search = true
+    @State var hasSearched = false
     
     var body: some View {
-        NavigationStack {
+        NavigationStack{
             VStack {
-//                TextField("Search", text: $searchText)
-//                    .textFieldStyle(RoundedBorderTextFieldStyle())
-//                    .padding()
-                HStack{
-                    Button(action: {
-                        isShowingLocationTagSheet.toggle()
-                    }) {
-                        Text("Select Location Tag")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .sheet(isPresented: $isShowingLocationTagSheet, content: {
-                        LocationTagSelectionView(selectedLocationTag: $selectedLocationTag)
-                            .presentationDetents([.height(250), .medium, .large])
-                    })
-                    .padding(.bottom)
-                }
-                ItemsListView(searchString: searchText, selectedTag: selectedLocationTag) // Pass selectedLocationTag to filter results
-                    .overlay {
-                        if items.isEmpty && boxes.isEmpty {
-                            ContentUnavailableView(label: {
-                                Label("No Items", systemImage: "circle.grid.3x3.fill")
-                            })
-                        }
-                    }
-                    .navigationTitle("Search")
+                ItemsListView(searchString: searchText, selectedTab: $selectedTab, search: $search, hasSearched: $hasSearched)
+                    .ignoresSafeArea(.keyboard, edges: .bottom)
                     .navigationDestination(for: Item.self) { item in
                         EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
                             .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                                AddItemLocationSheet(item: item)
+                                AddItemLocationSheet(item: item, isSaved: $isSaved, activeTagArray: $activeTagArray, availableTagArray: $availableTagArray)
                             })
                     }
                     .navigationDestination(for: Box.self) { box in
                         EditBoxView(box: box, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
                             .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                                AddBoxLocationSheet(box: box)
+                                AddBoxLocationSheet(box: box, isSaved: $isSaved, activeTagArray: $activeTagArray, availableTagArray: $availableTagArray)
                             })
                     }
-                
-                tabBarView
             }
         }
         .searchable(text: $searchText)
+        .navigationTitle("Search")
     }
     
     init(searchString: String = "", selectedTab: Binding<Tab>) {
@@ -75,49 +54,6 @@ struct SearchView: View {
             true
         })
         self._selectedTab = selectedTab
-    }
-    
-    var tabBarView: some View {
-        ZStack{
-            VStack(spacing: 0) {
-                Divider()
-                    .frame(height: 0.8)
-                    .overlay(.gray)
-                    .opacity(0.5)
-                HStack(spacing: 9) {
-                    tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill")
-                    tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill")
-                    tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass")
-                    tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder")
-                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear")
-                }
-                .padding(.top, 20)
-            }
-            .frame(height: 61)
-            .background(Color("TabColor").edgesIgnoringSafeArea(.all))
-            .ignoresSafeArea(.keyboard, edges: .bottom)
-        }
-    }
-    
-    func tabBarItem(_ tab: Tab, title: String, icon: String, selectedIcon: String) -> some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(spacing: 3) {
-                VStack {
-                    Image(systemName: (selectedTab == tab ? selectedIcon : icon))
-                        .font(selectedTab == tab ? .system(size: 24).weight(.heavy) : .system(size: 24))
-                        .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
-                }
-                .frame(width: 55, height: 28)
-                
-                Text(title)
-                    .font(.system(size: 11))
-                    .foregroundColor(selectedTab == tab ? .primary : Color("TextColor"))
-            }
-        }
-        .frame(width: 65, height: 42)
-        .onTapGesture {
-            selectedTab = tab
-        }
     }
     
 }

@@ -10,7 +10,7 @@ import PhotosUI
 import VisionKit
 
 enum Tab: Int {
-       case first, second, third, fourth, fifth
+       case first, second, third, fourth
    }
 
 struct ContentView: View {
@@ -27,7 +27,11 @@ struct ContentView: View {
     @State var shouldShowPlus: Bool = false
     @State private var navPath = NavigationPath()
     @State private var notificationCount: String = ""
-    
+    @State private var isSaved = true
+    @State var activeTagArray: [LocationTag] = []
+    @State var availableTagArray: [LocationTag] = []
+    @State var search = false
+    @State private var searchText = ""
     
     var body: some View {
            VStack(spacing: 0) {
@@ -37,7 +41,7 @@ struct ContentView: View {
                    }
                    else if selectedTab == .second {
                        NavigationStack(path: $navPath){
-                           ItemsListView(selectedTag: "")
+                           ItemsListView(selectedTab: $selectedTab, search: $search, hasSearched: $search)
                                .overlay{
                                    if items.isEmpty && boxes.isEmpty{
                                        ContentUnavailableView(label: {
@@ -49,11 +53,11 @@ struct ContentView: View {
                                }
                                .navigationDestination(for: Item.self) {item in EditItemView(item: item, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
                                        .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                                           AddItemLocationSheet(item: item)
+                                           AddItemLocationSheet(item: item, isSaved: $isSaved, activeTagArray: $activeTagArray, availableTagArray: $availableTagArray)
                                        })}
                                .navigationDestination(for: Box.self) {box in EditBoxView(box: box, isShowingAddLocationSheet: $isShowingAddLocationSheet, shouldShowPlus: $shouldShowPlus)
                                        .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                                           AddBoxLocationSheet(box: box)
+                                           AddBoxLocationSheet(box: box, isSaved: $isSaved, activeTagArray: $activeTagArray, availableTagArray: $availableTagArray)
                                        })}
                                .onAppear{
                                    shouldShowPlus = false
@@ -90,19 +94,18 @@ struct ContentView: View {
                        }
                    }
                    else if selectedTab == .third {
-                       SearchView(selectedTab: $selectedTab)
+      
+                           SearchView(selectedTab: $selectedTab)
+
                    }
                    else if selectedTab == .fourth {
-                       ScannerView(selectedTab: $selectedTab)
-                    }
-                   else if selectedTab == .fifth {
                        SettingsView()
-                   }
+                    }
                }
                .transaction { transaction in
                    transaction.animation = nil
                }
-               if selectedTab != .second && selectedTab != .fourth && selectedTab != .third {
+               if selectedTab != .second && selectedTab != .third {
                    tabBarView
                }
            }
@@ -120,8 +123,7 @@ struct ContentView: View {
                     tabBarItem(.first, title: "Home", icon: "house", selectedIcon: "house.fill", notification: true)
                     tabBarItem(.second, title: "Shelf", icon: "shippingbox", selectedIcon: "shippingbox.fill", notification: false)
                     tabBarItem(.third, title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass", notification: false)
-                    tabBarItem(.fourth, title: "Scan", icon: "barcode.viewfinder", selectedIcon: "barcode.viewfinder", notification: false)
-                    tabBarItem(.fifth, title: "Settings", icon: "gear", selectedIcon: "gear", notification: false)
+                    tabBarItem(.fourth, title: "Settings", icon: "gear", selectedIcon: "gear", notification: false)
                 }
                 .padding(.top, 20)
             }
@@ -227,7 +229,9 @@ struct ContentView: View {
         @State private var isShowingAddLocationSheet = false
         @Binding var isShowingSelectionSheet: Bool
         @State var isShowingEmptyAlert: Bool = false
-        
+        @State private var isSaved = false
+        @State var activeTagArray: [LocationTag] = []
+        @State var availableTagArray: [LocationTag] = []
         
         var body: some View {
             NavigationStack{
@@ -267,7 +271,7 @@ struct ContentView: View {
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
-                    ForEach(item.location) { tag in
+                    ForEach(activeTagArray) { tag in
                         HStack{
                             Text(tag.name)
                                 .foregroundColor(Color.white)
@@ -307,9 +311,16 @@ struct ContentView: View {
                             }
                             else{
                                 dismiss()
+                                for tag in activeTagArray{
+                                    item.location.append(tag)
+                                    modelContext.insert(tag)
+                                }
+                                for tag in availableTagArray {
+                                    modelContext.insert(tag)
+                                }
                                 modelContext.insert(item)
                                 isShowingSelectionSheet = false
-                                let change = Change(changeType: "New item created", originalVar: "nonexistant item", newVar: item.itemName, nameOfChangedItem: item.itemName, date: Date().description)
+                                let change = Change(changeType: "New item created", originalVar: "nonexistant item", newVar: item.itemName, nameOfChangedItem: item.itemName, date: dateFormatter(date: Date()))
                                 modelContext.insert(change)
                             }
                         }
@@ -317,7 +328,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                AddItemLocationSheet(item: item)
+                AddItemLocationSheet(item: item, isSaved: $isSaved, activeTagArray: $activeTagArray, availableTagArray: $availableTagArray)
             })
             .alert(isPresented: $isShowingEmptyAlert) {
                 Alert(title: Text("Cannot Leave Item Title Blank"), dismissButton: .default(Text("Ok")))
@@ -329,6 +340,17 @@ struct ContentView: View {
                 selectedItem?.loadTransferable(type: Data.self)
             }
         }
+        
+        func dateFormatter(date: Date) -> String{
+            let date = date
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "M/d/yy h:mm a"
+            formatter.timeZone = TimeZone(abbreviation: "CST")!  // Set to CST time zone
+
+            let formattedDate = formatter.string(from: date)
+            return(formattedDate)
+        }
     }
     
     struct addBoxSheet: View{
@@ -339,6 +361,9 @@ struct ContentView: View {
         @State private var isShowingAddLocationSheet = false
         @Binding var isShowingSelectionSheet: Bool
         @State var isShowingEmptyAlert: Bool = false
+        @State private var isSaved = false
+        @State var activeTagArray: [LocationTag] = []
+        @State var availableTagArray: [LocationTag] = []
 
         
         var body: some View{
@@ -370,7 +395,7 @@ struct ContentView: View {
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
-                    ForEach(box.location) { tag in
+                    ForEach(activeTagArray) { tag in
                         HStack{
                             Text(tag.name)
                                 .foregroundColor(Color.white)
@@ -404,9 +429,17 @@ struct ContentView: View {
                                 isShowingEmptyAlert = true
                             }
                             else{
-                                modelContext.insert(box)
                                 dismiss()
-                                let change = Change(changeType: "New box created", originalVar: "nonexistant item", newVar: box.boxName, nameOfChangedItem: box.boxName, date: Date().description)
+                                for tag in activeTagArray{
+                                    box.location.append(tag)
+                                    modelContext.insert(tag)
+                                }
+                                for tag in availableTagArray {
+                                    modelContext.insert(tag)
+                                }
+                                modelContext.insert(box)
+                                let change = Change(changeType: "New box created", originalVar: "nonexistant item", newVar: box.boxName, nameOfChangedItem: box.boxName, date: dateFormatter(date: Date()))
+                                print(change.date)
                                 modelContext.insert(change)
                                 isShowingSelectionSheet = false
                             }
@@ -415,7 +448,7 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isShowingAddLocationSheet, content: {
-                AddBoxLocationSheet(box: box)
+                AddBoxLocationSheet(box: box, isSaved: $isSaved, activeTagArray: $activeTagArray, availableTagArray: $availableTagArray)
             })
             .alert(isPresented: $isShowingEmptyAlert) {
                 Alert(title: Text("Cannot Leave Box Title Blank"), dismissButton: .default(Text("Ok")))
@@ -427,6 +460,17 @@ struct ContentView: View {
                 box.photo = try await
                 selectedItem?.loadTransferable(type: Data.self)
             }
+        }
+        
+        func dateFormatter(date: Date) -> String{
+            let date = date
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "M/d/yy h:mm a"
+            formatter.timeZone = TimeZone(abbreviation: "CST")!  // Set to CST time zone
+
+            let formattedDate = formatter.string(from: date)
+            return(formattedDate)
         }
         
     }

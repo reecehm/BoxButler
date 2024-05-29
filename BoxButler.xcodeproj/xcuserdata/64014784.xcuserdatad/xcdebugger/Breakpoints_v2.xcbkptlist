@@ -18,36 +18,6 @@
             endingLineNumber = "15"
             landmarkName = "Box"
             landmarkType = "3">
-            <Locations>
-               <Location
-                  uuid = "F9293A72-4DA6-46B1-BAA0-CF4AD2DDDE89 - ea2cb115606f75a2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BoxButler.Folder.__allocating_init(folderName: Swift.String, contents: Swift.Optional&lt;Swift.Array&lt;BoxButler.Item&gt;&gt;) -&gt; BoxButler.Folder"
-                  moduleName = "BoxButler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/64014784/Desktop/Xcode/BoxButler/BoxButler/Folder.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0">
-               </Location>
-               <Location
-                  uuid = "F9293A72-4DA6-46B1-BAA0-CF4AD2DDDE89 - 2102e778295306"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "BoxButler.Folder.init(folderName: Swift.String, contents: Swift.Optional&lt;Swift.Array&lt;BoxButler.Item&gt;&gt;) -&gt; BoxButler.Folder"
-                  moduleName = "BoxButler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///var/folders/93/2rxx8m_10g94ztqhv01r0d_h0000gp/T/swift-generated-sources/@__swiftmacro_9BoxButler6Folder5ModelfMm_.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2"
-                  endingLineNumber = "2">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -62,6 +32,22 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "24"
             endingLineNumber = "24"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2A8EA2DC-335A-4595-8A63-487A4DB568BE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LocationTagSelectionView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
